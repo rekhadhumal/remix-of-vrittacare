@@ -19,13 +19,15 @@ import {
 export const Route = createFileRoute("/_authenticated/assessment")({
   head: () => ({
     meta: [
-      { title: "Take Assessment · MindBalance" },
+      { title: "Take Assessment · VRITTACARE" },
       {
         name: "description",
         content: "Answer twelve quick questions about your routine and social media use to get your wellness score.",
       },
-      { property: "og:title", content: "Take Assessment · MindBalance" },
+      { property: "og:title", content: "Take Assessment · VRITTACARE" },
       { property: "og:description", content: "Twelve quick questions about your daily routine." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AssessmentPage,
@@ -53,7 +55,7 @@ function AssessmentPage() {
   const mutation = useMutation({
     mutationFn: () => predictMentalHealth(form),
     onSuccess: (result) => {
-      savePrediction(result);
+      savePrediction(result, form);
       toast.success("Your assessment was scored by the model.");
       navigate({ to: "/results" });
     },

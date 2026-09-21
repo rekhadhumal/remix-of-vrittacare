@@ -48,7 +48,7 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
                 <Brain className="h-5 w-5" />
               </span>
               <div>
-                <p className="bg-gradient-to-r from-mb-cyan to-primary bg-clip-text text-[15px] font-extrabold leading-tight text-transparent">MindBalance</p>
+                <p className="bg-gradient-to-r from-mb-cyan to-primary bg-clip-text text-[15px] font-extrabold leading-tight text-transparent">VRITTACARE</p>
                 <p className="max-w-[132px] text-[9px] leading-tight text-muted-foreground">
                   Mental Health Prediction System
                 </p>

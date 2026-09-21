@@ -1,4 +1,4 @@
-// Shared, client-safe types and presentation helpers for MindBalance.
+// Shared, client-safe types and presentation helpers for VRITTACARE.
 // NOTE: nothing here predicts a score — the score always comes from the
 // external scikit-learn Random Forest service (see PREDICTION_API.md).
 

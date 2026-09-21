@@ -9,9 +9,14 @@ export const PREDICTION_URL = "http://127.0.0.1:8000/predict";
 export type PredictionResponse = {
   score: number;
   category: string;
-  needs_attention: boolean;
-  watch: boolean;
-  stable: boolean;
+  needs_attention: string[];
+  watch: string[];
+  stable: string[];
+};
+
+export type SavedPrediction = {
+  result: PredictionResponse;
+  assessment: AssessmentInput | null;
 };
 
 export class PredictionError extends Error {
@@ -36,6 +41,11 @@ function toPayload(a: AssessmentInput) {
     Stress_Level: a.stress_level,
     Country: a.country,
   };
+}
+
+function toItems(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === "string" && item.trim().length > 0);
 }
 
 export async function predictMentalHealth(a: AssessmentInput): Promise<PredictionResponse> {
@@ -74,29 +84,43 @@ export async function predictMentalHealth(a: AssessmentInput): Promise<Predictio
   return {
     score: r.score,
     category: typeof r.category === "string" ? r.category : "Unknown",
-    needs_attention: Boolean(r.needs_attention),
-    watch: Boolean(r.watch),
-    stable: Boolean(r.stable),
+    needs_attention: toItems(r.needs_attention),
+    watch: toItems(r.watch),
+    stable: toItems(r.stable),
   };
 }
 
 const STORAGE_KEY = "vrittacare:lastPrediction";
 
-export function savePrediction(result: PredictionResponse) {
+export function savePrediction(result: PredictionResponse, assessment: AssessmentInput) {
   try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(result));
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ result, assessment } satisfies SavedPrediction));
   } catch {
     // storage unavailable — results page will prompt to retake
   }
 }
 
-export function loadPrediction(): PredictionResponse | null {
+export function loadPrediction(): SavedPrediction | null {
   try {
     const raw = sessionStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as PredictionResponse;
-    if (typeof parsed.score !== "number") return null;
-    return parsed;
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== "object") return null;
+
+    const saved = parsed as Partial<SavedPrediction> & Partial<PredictionResponse>;
+    const result = saved.result ?? saved;
+    if (typeof result.score !== "number" || Number.isNaN(result.score)) return null;
+
+    return {
+      result: {
+        score: result.score,
+        category: typeof result.category === "string" ? result.category : "Unknown",
+        needs_attention: toItems(result.needs_attention),
+        watch: toItems(result.watch),
+        stable: toItems(result.stable),
+      },
+      assessment: saved.assessment && typeof saved.assessment === "object" ? saved.assessment : null,
+    };
   } catch {
     return null;
   }
