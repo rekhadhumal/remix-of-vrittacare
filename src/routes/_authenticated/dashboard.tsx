@@ -23,7 +23,7 @@ import { getDashboardData } from "@/lib/dashboard.functions";
 import { lifestyleCards, radarValues, scoreStatus, type DashboardData } from "@/lib/mb";
 import { loadPrediction, type SavedPrediction } from "@/lib/prediction";
 import { supabase } from "@/integrations/supabase/client";
-import { getHeroLine, getUserSeed, getWellnessQuote } from "@/lib/personalization";
+import { getHeroLine, getHeroQuote, getUserSeed, getWellnessQuote } from "@/lib/personalization";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -156,7 +156,7 @@ function Hero({
   seed: string;
 }) {
   const status = score === null ? null : scoreStatus(score);
-  const quote = getWellnessQuote(seed, 0);
+  const quote = getHeroQuote(seed, 0);
   const heroLine = getHeroLine(seed, score === null ? 1 : Math.round(score * 10));
 
   return (
@@ -174,7 +174,7 @@ function Hero({
 
       <div className="relative flex min-h-[290px] max-w-[650px] flex-col justify-center px-6 py-10 md:px-9">
         <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.22em] text-mb-cyan">Your daily wellness space</p>
-        <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl">
+        <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">
           {name ? `Welcome back, ${name}.` : "Welcome back."}
         </h1>
         <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/75 md:text-base">
