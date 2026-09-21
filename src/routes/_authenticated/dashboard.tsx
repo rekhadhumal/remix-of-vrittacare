@@ -22,6 +22,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { getDashboardData } from "@/lib/dashboard.functions";
 import { lifestyleCards, radarValues, scoreStatus, type DashboardData } from "@/lib/mb";
 import { loadPrediction, type SavedPrediction } from "@/lib/prediction";
+import { supabase } from "@/integrations/supabase/client";
+import { getHeroLine, getUserSeed, getWellnessQuote } from "@/lib/personalization";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -80,14 +82,39 @@ function DashboardPage() {
     queryFn: () => fetchData(),
   });
   const [saved, setSaved] = useState<SavedPrediction | null>(null);
+  const [authName, setAuthName] = useState<string | null>(null);
+  const [authSeed, setAuthSeed] = useState<string | null>(null);
 
   useEffect(() => {
     setSaved(loadPrediction());
+    supabase.auth.getUser().then(({ data: authData }) => {
+      const user = authData.user;
+      const metadata = (user?.user_metadata ?? {}) as Record<string, unknown>;
+      const metadataName =
+        typeof metadata.display_name === "string" ? metadata.display_name.trim() :
+        typeof metadata.full_name === "string" ? metadata.full_name.trim() :
+        typeof metadata.name === "string" ? metadata.name.trim() : null;
+      const fallbackName =
+        metadataName ||
+        user?.email?.split("@")[0]?.replace(/[._-]+/g, " ").replace(/\b\w/g, (m) => m.toUpperCase()) ||
+        null;
+      setAuthName(fallbackName);
+      setAuthSeed(user?.id ?? fallbackName);
+    });
   }, []);
+
+  const latestAssessment = saved?.assessment ?? data?.assessment ?? null;
+  const displayName = authName ?? data?.displayName ?? null;
+  const userSeed = getUserSeed(authSeed ?? displayName, latestAssessment);
 
   return (
     <AppShell aside={<AssistantPanel />}>
-      <Hero name={data?.displayName ?? null} score={saved?.result.score ?? data?.result?.score ?? null} />
+      <Hero
+        name={displayName}
+        score={saved?.result.score ?? data?.result?.score ?? null}
+        assessment={latestAssessment}
+        seed={userSeed}
+      />
 
       {isLoading ? (
         <Panel>
@@ -120,16 +147,20 @@ function DashboardPage() {
   );
 }
 
-function Hero({ name, score }: { name: string | null; score: number | null }) {
+function Hero({
+  name,
+  score,
+  assessment,
+  seed,
+}: {
+  name: string | null;
+  score: number | null;
+  assessment: DashboardData["assessment"];
+  seed: string;
+}) {
   const status = score === null ? null : scoreStatus(score);
-  const quote =
-    score === null
-      ? "A gentle check-in can become a powerful beginning."
-      : score >= 8
-        ? "Keep growing at your own pace. Quiet progress still counts."
-        : score >= 6.5
-          ? "You do not need to change everything. One good step is enough for today."
-          : "Be gentle with yourself. Understanding where you are is already a step forward.";
+  const quote = getWellnessQuote(seed, 0);
+  const heroLine = getHeroLine(seed, score === null ? 1 : Math.round(score * 10));
 
   return (
     <section className="group relative isolate min-h-[290px] overflow-hidden rounded-[26px] border border-white/15 shadow-[0_30px_90px_-50px_rgba(34,211,238,.55)]">
@@ -151,7 +182,7 @@ function Hero({ name, score }: { name: string | null; score: number | null }) {
         </h1>
         <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/75 md:text-base">
           {status ? status.headline + " " : ""}
-          This is a space to understand your habits without judging yourself.
+          {heroLine}
         </p>
         <div className="mt-5 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.055] px-4 py-3 backdrop-blur-md shadow-[0_16px_40px_-28px_rgba(34,211,238,.6)]">
           <p className="text-lg font-serif font-semibold italic leading-relaxed tracking-[0.01em] text-white/95 md:text-xl">“{quote}”</p>
