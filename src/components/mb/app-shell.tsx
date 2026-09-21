@@ -2,10 +2,12 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Brain, ClipboardList, Home, Info, LineChart, LogOut, MessageCircle, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { getWellnessQuote } from "@/lib/personalization";
 
 const NAV = [
   { to: "/dashboard", label: "Home", icon: Home },
@@ -20,6 +22,14 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [sidebarQuote, setSidebarQuote] = useState("A better day can begin with one small decision you make for yourself.");
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      const seed = data.user?.id ?? data.user?.email ?? "vrittacare";
+      setSidebarQuote(getWellnessQuote(seed, 7));
+    });
+  }, []);
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -84,7 +94,7 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
                   <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-mb-cyan">A thought to carry</span>
                 </div>
                 <p className="font-serif text-sm font-semibold italic leading-relaxed text-white/90">
-                  “You are not behind. Keep walking — even a quiet step can change the direction of a life.”
+                  “{sidebarQuote}”
                 </p>
               </div>
               <div className="relative mt-3 text-center">
