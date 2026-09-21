@@ -112,7 +112,6 @@ function DashboardPage() {
       <Hero
         name={displayName}
         score={saved?.result.score ?? data?.result?.score ?? null}
-        assessment={latestAssessment}
         seed={userSeed}
       />
 
@@ -150,12 +149,10 @@ function DashboardPage() {
 function Hero({
   name,
   score,
-  assessment,
   seed,
 }: {
   name: string | null;
   score: number | null;
-  assessment: DashboardData["assessment"];
   seed: string;
 }) {
   const status = score === null ? null : scoreStatus(score);
