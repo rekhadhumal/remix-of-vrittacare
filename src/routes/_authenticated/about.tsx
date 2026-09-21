@@ -124,13 +124,13 @@ function AboutPage() {
                 </div>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Vaibhav contributed to the project's early technical foundation: he worked on the initial dataset-understanding stage and project dependency setup, helping establish the base that the later modeling and web layers were built on. He also collaborated on the product journey, contributing to the direction that grew into the complete VRITTACARE application.
+                Vaibhav played an important collaborative role in establishing the project's technical foundation and early direction. His work included understanding the initial dataset and project requirements, setting up the development dependencies and working environment, and contributing to early technical discussions around how the data-science work could become a usable student-facing application. He also remained part of the product-development collaboration, helping shape the project direction and giving the later modeling, API and frontend work a clearer foundation to build on.
               </p>
               <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-mb-violet">
-                <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Data Understanding</span>
-                <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Project Setup</span>
-                <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Technical Collaboration</span>
-                <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Product Direction</span>
+                <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Technical Foundation</span>
+                <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Dataset Understanding</span>
+                <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Environment & Dependencies</span>
+                <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Product Collaboration</span>
               </div>
               <a href="https://github.com/vaibhavvsolanke" target="_blank" rel="noreferrer" className="mt-4 inline-flex text-xs font-bold text-mb-violet hover:underline">
                 View GitHub profile →
