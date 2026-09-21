@@ -1,12 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/mb/app-shell";
 import { Panel, SectionTitle } from "@/components/mb/primitives";
-import { submitAssessment } from "@/lib/dashboard.functions";
+import { predictMentalHealth, PredictionError, savePrediction } from "@/lib/prediction";
 import {
   ACADEMIC_LEVELS,
   COUNTRIES,
