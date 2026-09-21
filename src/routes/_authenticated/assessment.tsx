@@ -142,6 +142,11 @@ function AssessmentPage() {
           />
 
           <div className="sm:col-span-2">
+            {mutation.isError && (
+              <p className="mb-3 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                {mutation.error instanceof Error ? mutation.error.message : "The prediction request failed. Please try again."}
+              </p>
+            )}
             <button
               type="submit"
               disabled={mutation.isPending}
