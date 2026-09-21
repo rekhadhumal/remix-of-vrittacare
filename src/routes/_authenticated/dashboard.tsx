@@ -135,7 +135,7 @@ function DashboardPage() {
           </Link>
         </Panel>
       ) : (
-        <DashboardBody data={data} saved={saved} />
+        <DashboardBody data={data} saved={saved} seed={userSeed} />
       )}
 
       <div className="xl:hidden">
@@ -203,7 +203,7 @@ function Hero({
   );
 }
 
-export function DashboardBody({ data, saved = null }: { data: DashboardData | undefined; saved?: SavedPrediction | null }) {
+export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { data: DashboardData | undefined; saved?: SavedPrediction | null; seed?: string }) {
   const [openThreeD, setOpenThreeD] = useState(false);
   const assessment = saved?.assessment ?? data?.assessment;
   if (!assessment) return null;
@@ -336,7 +336,7 @@ export function DashboardBody({ data, saved = null }: { data: DashboardData | un
             <h3 className="mt-3 text-2xl font-extrabold">{focusInfo.title}</h3>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{focusInfo.text}</p>
             <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.045] p-4 backdrop-blur-md">
-              <p className="font-serif italic tracking-wide text-xl leading-relaxed text-foreground/90">“You are allowed to grow slowly. A life is built from small moments.”</p>
+              <p className="font-serif italic tracking-wide text-xl leading-relaxed text-foreground/90">“{getWellnessQuote(seed, 17)}”</p>
             </div>
             <Link to="/insights" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-mb-cyan transition hover:gap-3">
               Turn this into a plan <ArrowRight className="h-4 w-4" />
@@ -351,7 +351,7 @@ export function DashboardBody({ data, saved = null }: { data: DashboardData | un
         <div className="relative flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between md:p-7">
           <div className="max-w-2xl">
             <p className="flex items-center gap-2 text-base font-bold"><Heart className="h-4 w-4 text-mb-cyan" /> Keep this close</p>
-            <p className="mt-2 text-lg leading-relaxed text-white/85">“Your worth was never a number. Let the number be a mirror, not a label.”</p>
+            <p className="mt-2 text-lg leading-relaxed text-white/85">“{getWellnessQuote(seed, 23)}”</p>
           </div>
           <Link to="/chat" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur-md transition hover:bg-white/15">
             Talk it through <ArrowRight className="h-4 w-4" />
