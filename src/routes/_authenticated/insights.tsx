@@ -22,7 +22,11 @@ function InsightsPage() {
   return (
     <AppShell>
       <Panel>
-        <SectionTitle sub={saved ? `Latest model category: ${saved.result.category}` : undefined}>Insights & Tips</SectionTitle>
+        {saved ? (
+          <SectionTitle sub={`Latest model category: ${saved.result.category}`}>Insights & Tips</SectionTitle>
+        ) : (
+          <SectionTitle>Insights & Tips</SectionTitle>
+        )}
         {!checked ? null : saved ? (
           <PredictionSections result={saved.result} />
         ) : (
