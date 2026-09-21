@@ -98,10 +98,10 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
                 </p>
               </div>
               <div className="relative mt-3 text-center">
-                <p className="text-[9px] uppercase tracking-[0.16em] text-muted-foreground">Dreamed into reality by</p>
-                <p className="mt-1 text-[11px] font-bold text-foreground/90">Vaibhav Solanke</p>
+                <p className="text-[9px] uppercase tracking-[0.16em] text-muted-foreground">Created with care by</p>
+                <p className="mt-1 text-[11px] font-extrabold uppercase tracking-[0.06em] text-foreground/95">VAIBHAV SOLANKE</p>
                 <p className="text-[9px] text-mb-cyan">&</p>
-                <p className="text-[11px] font-bold text-foreground/90">Rutuja Dhumal</p>
+                <p className="text-[11px] font-extrabold uppercase tracking-[0.06em] text-foreground/95">RUTUJA DHUMAL</p>
               </div>
             </div>
 
