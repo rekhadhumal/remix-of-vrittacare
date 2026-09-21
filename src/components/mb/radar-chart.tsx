@@ -152,9 +152,23 @@ export function Radar3D({ data }: { data: Point[] }) {
           </div>
         ))}
       </div>
-      <p className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-muted-foreground">
-        Drag to rotate · {auto ? "auto-rotating" : "manual"}
-      </p>
+      <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-white/10 bg-black/20 px-3 py-2 backdrop-blur-md">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 sm:grid-cols-5">
+          {data.map((item, index) => (
+            <div key={item.label} className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
+              <span
+                className="h-1.5 w-1.5 shrink-0 rounded-full"
+                style={{ background: ["var(--mb-cyan)", "var(--primary)", "var(--mb-violet)", "var(--mb-pink)", "var(--mb-green)"][index % 5] }}
+              />
+              <span className="truncate">{item.label}</span>
+              <span className="ml-auto font-semibold text-foreground/80">{Math.round(item.value * 100)}%</span>
+            </div>
+          ))}
+        </div>
+        <p className="mt-1 text-center text-[9px] text-muted-foreground">
+          Drag to rotate · {auto ? "auto-rotating" : "manual"}
+        </p>
+      </div>
       <Button
         type="button"
         variant="outline"
