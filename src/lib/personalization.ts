@@ -28,6 +28,21 @@ export const WELLNESS_QUOTES = [
   "Quiet progress is still progress. Give it time to become visible."
 ] as const;
 
+const HERO_QUOTES = [
+  "You do not need to have it all figured out to take the next meaningful step.",
+  "The life you want is often shaped by the small choices you repeat when nobody is watching.",
+  "Give yourself permission to grow at a pace that still lets you breathe.",
+  "A difficult season does not get to write the whole story of who you become.",
+  "Your next chapter does not need a dramatic beginning — it needs an honest one.",
+  "Keep choosing the things that make tomorrow a little kinder to meet.",
+  "You can be ambitious about your future and gentle with yourself at the same time.",
+  "What you notice today can become the change you are grateful for later.",
+  "There is strength in knowing when to pause, reflect, and begin again.",
+  "Your direction matters more than the speed at which you get there.",
+  "A healthier rhythm is built one ordinary day at a time.",
+  "You are allowed to make progress without turning your life into a race."
+] as const;
+
 const HERO_LINES = [
   "Your patterns are not a verdict — they are a starting point for a more intentional day.",
   "Today does not need a complete reset. It only needs one next step that feels possible.",
@@ -69,6 +84,10 @@ export function pickForUser<T>(seed: string, values: readonly T[], salt = 0): T 
 
 export function getWellnessQuote(seed: string, salt = 0): string {
   return pickForUser(seed || "vrittacare", WELLNESS_QUOTES, salt);
+}
+
+export function getHeroQuote(seed: string, salt = 0): string {
+  return pickForUser(seed || "vrittacare", HERO_QUOTES, salt);
 }
 
 export function getHeroLine(seed: string, salt = 0): string {
