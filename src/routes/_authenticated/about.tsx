@@ -114,7 +114,7 @@ function AboutPage() {
             </article>
           </div>
 
-          <p className="mt-6 text-center font-hand text-xl text-foreground/80">
+          <p className="mt-6 text-center font-serif italic tracking-wide text-xl text-foreground/80">
             “Good technology should not make people feel smaller. It should help them understand themselves a little better.”
           </p>
         </Panel>
