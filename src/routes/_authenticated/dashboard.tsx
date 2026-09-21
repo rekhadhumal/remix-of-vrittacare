@@ -175,7 +175,7 @@ function Hero({
       <div className="relative flex min-h-[290px] max-w-[650px] flex-col justify-center px-6 py-10 md:px-9">
         <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.22em] text-mb-cyan">Your daily wellness space</p>
         <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl">
-          {"Hi" + (name ? " " + name : " there") + "."}
+          {name ? `Welcome back, ${name}.` : "Welcome back."}
         </h1>
         <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/75 md:text-base">
           {status ? status.headline + " " : ""}
