@@ -305,7 +305,7 @@ export function DashboardBody({ data, saved = null }: { data: DashboardData | un
             <h3 className="mt-3 text-2xl font-extrabold">{focusInfo.title}</h3>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{focusInfo.text}</p>
             <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.045] p-4 backdrop-blur-md">
-              <p className="font-hand text-xl leading-relaxed text-foreground/90">“You are allowed to grow slowly. A life is built from small moments.”</p>
+              <p className="font-serif italic tracking-wide text-xl leading-relaxed text-foreground/90">“You are allowed to grow slowly. A life is built from small moments.”</p>
             </div>
             <Link to="/insights" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-mb-cyan transition hover:gap-3">
               Turn this into a plan <ArrowRight className="h-4 w-4" />
