@@ -34,7 +34,7 @@ function toPayload(a: AssessmentInput) {
     Most_Used_Platform: a.most_used_platform,
     Purpose_Of_Use: a.purpose_of_use,
     Avg_Daily_Usage_Hours: a.avg_daily_usage_hours,
-    DailyUnlocks: a.daily_unlocks,
+    Daily_Unlocks: a.daily_unlocks,
     Study_Hours: a.study_hours,
     Physical_Activity_Hours: a.physical_activity_hours,
     Sleep_Hours_Per_Night: a.sleep_hours_per_night,
