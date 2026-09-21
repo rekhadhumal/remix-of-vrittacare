@@ -8,3 +8,4 @@
 - [ ] Verify the dashboard stage with typecheck, build, lint, and browser screenshots.
 - [ ] Complete missing secondary pages and prediction documentation in a later stage.
 - [ ] Match the VRITTACARE authentication screen closely to the uploaded visual reference.
+- [x] Use the latest real FastAPI score, category, and response groups across Results, Dashboard, and Insights.

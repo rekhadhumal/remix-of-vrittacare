@@ -129,11 +129,11 @@ function Hero({ name }: { name: string | null }) {
   );
 }
 
-export function DashboardBody({ data, saved = null }: { data: DashboardData; saved?: SavedPrediction | null }) {
+export function DashboardBody({ data, saved = null }: { data?: DashboardData; saved?: SavedPrediction | null }) {
   const [openThreeD, setOpenThreeD] = useState(false);
-  const assessment = saved?.assessment ?? data.assessment;
+  const assessment = saved?.assessment ?? data?.assessment;
   if (!assessment) return null;
-  const storedResult = data.result;
+  const storedResult = data?.result ?? null;
   const score = saved?.result.score ?? storedResult?.score ?? null;
   const category = saved?.result.category ?? storedResult?.status_label ?? null;
   const status = score === null ? null : scoreStatus(score);
