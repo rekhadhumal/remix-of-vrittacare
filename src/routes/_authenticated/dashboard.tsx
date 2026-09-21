@@ -1,11 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowRight, Heart, Moon, Sparkles, Target, Wind } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 import heroInclusive from "@/assets/mindbalance-hero-inclusive.jpg";
 import iconActivity from "@/assets/icon-activity.png";
@@ -16,33 +13,22 @@ import iconStudy from "@/assets/icon-study.png";
 import quoteArt from "@/assets/quote-art.jpg";
 import { AppShell } from "@/components/mb/app-shell";
 import { AssistantPanel } from "@/components/mb/assistant-panel";
-import { PredictionSections } from "@/components/mb/prediction-sections";
 import { Panel, SectionTitle, StatusPill } from "@/components/mb/primitives";
 import { Radar3D, RadarChart } from "@/components/mb/radar-chart";
 import { ScoreGauge } from "@/components/mb/score-gauge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { getDashboardData } from "@/lib/dashboard.functions";
-import {
-  buildInsights,
-  lifestyleCards,
-  prettyFeature,
-  radarValues,
-  scoreStatus,
-  type DashboardData,
-} from "@/lib/mb";
+import { lifestyleCards, radarValues, scoreStatus, type DashboardData } from "@/lib/mb";
 import { loadPrediction, type SavedPrediction } from "@/lib/prediction";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Your Wellness Dashboard · VRITTACARE" },
-      {
-        name: "description",
-        content: "See your mental health score, wellness profile, lifestyle overview and personalized insights.",
-      },
-      { property: "og:title", content: "Your Wellness Dashboard · VRITTACARE" },
-      { property: "og:description", content: "Your score, habits and personalized guidance in one place." },
+      { title: "Your Wellness Space · VRITTACARE" },
+      { name: "description", content: "A calm, personalized overview of your latest VRITTACARE wellness assessment." },
+      { property: "og:title", content: "Your Wellness Space · VRITTACARE" },
+      { property: "og:description", content: "Your current wellness snapshot and next small step." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -58,9 +44,40 @@ const LIFESTYLE_ART = {
   stress: iconStress,
 } as const;
 
+const FOCUS_COPY: Record<string, { title: string; text: string; icon: typeof Target }> = {
+  Sleep: {
+    title: "Protect your rest",
+    text: "Give your body a consistent wind-down window tonight. Rest is part of progress, not time away from it.",
+    icon: Moon,
+  },
+  Study: {
+    title: "Make study feel lighter",
+    text: "Try one focused block, then take a real break. A calm rhythm is often easier to sustain than a perfect schedule.",
+    icon: Target,
+  },
+  Activity: {
+    title: "Add a little movement",
+    text: "A short walk, stretch, or a few minutes outside can be a gentle reset between long periods of sitting.",
+    icon: Heart,
+  },
+  "Screen Usage": {
+    title: "Create a screen-free pocket",
+    text: "Choose one small part of the day to be screen-free, especially near bedtime, and let your attention breathe.",
+    icon: Sparkles,
+  },
+  Stress: {
+    title: "Give your mind a pause",
+    text: "Slow your breathing, step away for a few minutes, or talk to someone you trust. You do not have to carry everything at once.",
+    icon: Wind,
+  },
+};
+
 function DashboardPage() {
   const fetchData = useServerFn(getDashboardData);
-  const { data, isLoading } = useQuery<DashboardData>({ queryKey: ["dashboard"], queryFn: () => fetchData() });
+  const { data, isLoading } = useQuery<DashboardData>({
+    queryKey: ["dashboard"],
+    queryFn: () => fetchData(),
+  });
   const [saved, setSaved] = useState<SavedPrediction | null>(null);
 
   useEffect(() => {
@@ -69,22 +86,24 @@ function DashboardPage() {
 
   return (
     <AppShell aside={<AssistantPanel />}>
-      <Hero name={data?.displayName ?? null} />
+      <Hero name={data?.displayName ?? null} score={saved?.result.score ?? data?.result?.score ?? null} />
 
       {isLoading ? (
-        <Panel className="border-mb-cyan/15 bg-gradient-to-br from-mb-panel to-mb-panel-2/55">
-          <p className="text-sm text-muted-foreground">Loading your dashboard…</p>
+        <Panel>
+          <p className="text-sm text-muted-foreground">Loading your wellness space…</p>
         </Panel>
       ) : !saved?.assessment && !data?.assessment ? (
-        <Panel>
-          <SectionTitle sub="Take your first assessment to unlock your score, wellness profile and personalized insights.">
-            Let's get started
+        <Panel className="relative overflow-hidden">
+          <div className="absolute -right-20 -top-20 h-52 w-52 rounded-full bg-mb-cyan/15 blur-3xl" />
+          <SectionTitle sub="Your first check-in becomes the starting point for a more personal experience.">
+            Begin your wellness journey
           </SectionTitle>
-          <Link
-            to="/assessment"
-            className="inline-flex rounded-xl bg-gradient-to-r from-mb-cyan to-mb-violet px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110"
-          >
-            Take Assessment
+          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            There is no perfect score to chase here. VRITTACARE is designed to help you notice patterns,
+            understand them, and choose one small step at a time.
+          </p>
+          <Link to="/assessment" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-mb-cyan to-primary px-5 py-3 text-sm font-bold text-primary-foreground shadow-mb-glow transition hover:-translate-y-0.5 hover:brightness-110">
+            Take Assessment <ArrowRight className="h-4 w-4" />
           </Link>
         </Panel>
       ) : (
@@ -100,30 +119,48 @@ function DashboardPage() {
   );
 }
 
-function Hero({ name }: { name: string | null }) {
+function Hero({ name, score }: { name: string | null; score: number | null }) {
+  const status = score === null ? null : scoreStatus(score);
+  const quote =
+    score === null
+      ? "A gentle check-in can become a powerful beginning."
+      : score >= 8
+        ? "Keep growing at your own pace. Quiet progress still counts."
+        : score >= 6.5
+          ? "You do not need to change everything. One good step is enough for today."
+          : "Be gentle with yourself. Understanding where you are is already a step forward.";
+
   return (
-    <section className="group relative isolate min-h-[248px] overflow-hidden rounded-2xl border border-mb-cyan/15 shadow-mb-card md:min-h-[278px]">
-      <img src={heroInclusive} alt="A diverse group of students overlooking a mountain landscape at sunset" className="absolute inset-0 h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.015]" />
-      <div className="absolute inset-0 bg-gradient-to-r from-mb-sidebar via-mb-sidebar/75 to-mb-sidebar/5" />
-      <div className="absolute inset-0 bg-gradient-to-t from-mb-sidebar/65 via-transparent to-transparent" />
-      <div className="relative flex min-h-[248px] max-w-[520px] flex-col justify-center px-6 py-8 md:min-h-[278px] md:px-9">
-        <p className="mb-2 text-[11px] font-bold uppercase text-mb-cyan">Your daily wellness space</p>
-        <h1 className="text-3xl font-extrabold leading-tight md:text-4xl">Hi{name ? ` ${name}` : " there"}!</h1>
-        <p className="mt-3 max-w-[420px] text-sm leading-relaxed text-foreground/75">
-          A quick check-in helps you understand how your habits shape how you feel.
-        </p>
-        <Link
-          to="/assessment"
-          className="mt-5 inline-flex w-fit items-center rounded-xl bg-gradient-to-r from-mb-cyan to-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-[0_12px_34px_-16px_var(--mb-cyan)] transition hover:-translate-y-0.5 hover:brightness-110"
-        >
-          Take Assessment
-        </Link>
+    <section className="group relative isolate min-h-[290px] overflow-hidden rounded-[26px] border border-white/15 shadow-[0_30px_90px_-50px_rgba(34,211,238,.55)]">
+      <img src={heroInclusive} alt="Students sharing a peaceful mountain view" className="absolute inset-0 h-full w-full object-cover object-center transition duration-[1400ms] group-hover:scale-[1.025]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(34,211,238,.18),transparent_30%),linear-gradient(90deg,rgba(2,10,25,.96)_0%,rgba(3,15,35,.78)_42%,rgba(3,15,35,.12)_100%)]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/10" />
+      <div className="absolute right-8 top-8 hidden h-24 w-24 rounded-full border border-white/10 bg-white/5 shadow-[inset_0_0_35px_rgba(255,255,255,.08)] backdrop-blur-md md:block">
+        <div className="absolute inset-4 rounded-full bg-mb-cyan/20 blur-xl" />
+        <div className="absolute inset-7 rounded-full border border-mb-cyan/50 bg-mb-cyan/10 animate-pulse" />
       </div>
-      <div className="absolute bottom-5 right-6 hidden max-w-[190px] text-right md:block">
-        <p className="font-hand text-2xl font-bold leading-none text-foreground">
-          Small changes make
-          <span className="block text-mb-cyan">big differences</span>
+
+      <div className="relative flex min-h-[290px] max-w-[650px] flex-col justify-center px-6 py-10 md:px-9">
+        <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.22em] text-mb-cyan">Your daily wellness space</p>
+        <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl">
+          {"Hi" + (name ? " " + name : " there") + "."}
+        </h1>
+        <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/75 md:text-base">
+          {status ? status.headline + " " : ""}
+          This is a space to understand your habits without judging yourself.
         </p>
+        <p className="mt-4 max-w-lg font-hand text-2xl leading-tight text-white/90">“{quote}”</p>
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link to="/assessment" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-mb-cyan to-primary px-5 py-3 text-sm font-bold text-primary-foreground shadow-mb-glow transition hover:-translate-y-0.5 hover:brightness-110">
+            {score === null ? "Take Assessment" : "Check in again"} <ArrowRight className="h-4 w-4" />
+          </Link>
+          {score !== null ? (
+            <Link to="/insights" className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/15">
+              See my next step
+            </Link>
+          ) : null}
+        </div>
       </div>
     </section>
   );
@@ -133,183 +170,154 @@ export function DashboardBody({ data, saved = null }: { data: DashboardData | un
   const [openThreeD, setOpenThreeD] = useState(false);
   const assessment = saved?.assessment ?? data?.assessment;
   if (!assessment) return null;
-  const storedResult = data?.result ?? null;
-  const score = saved?.result.score ?? storedResult?.score ?? null;
-  const category = saved?.result.category ?? storedResult?.status_label ?? null;
+
+  const score = saved?.result.score ?? data?.result?.score ?? null;
+  const category = saved?.result.category ?? data?.result?.status_label ?? null;
   const status = score === null ? null : scoreStatus(score);
   const radar = radarValues(assessment);
   const cards = lifestyleCards(assessment);
-  const derivedInsights = buildInsights(assessment);
 
-  const maxImportance = Math.max(0.0001, ...(storedResult?.feature_importance ?? []).map((f) => f.importance));
+  const focus = useMemo(
+    () => radar.reduce((lowest, current) => (current.value < lowest.value ? current : lowest), radar[0]),
+    [radar],
+  );
+
+  const focusInfo = FOCUS_COPY[focus.label] ?? FOCUS_COPY.Stress;
+  const FocusIcon = focusInfo.icon;
+  const balance = Math.round((radar.reduce((sum, item) => sum + item.value, 0) / radar.length) * 100);
 
   return (
     <>
-      <div className="grid gap-4 lg:grid-cols-[1.08fr_0.92fr]">
-      <Panel hover className="relative overflow-hidden">
-        <div className="pointer-events-none absolute -left-16 top-12 h-44 w-44 rounded-full bg-mb-cyan/10 blur-3xl" />
-        <SectionTitle sub="A clear view of your latest assessment.">Mental Health Score</SectionTitle>
-        {score !== null && status ? (
-          <div className="relative flex min-h-[278px] flex-col items-center gap-5 md:flex-row md:items-center">
-            <ScoreGauge score={score} />
-            <div className="flex-1 space-y-3 text-center md:text-left">
-              <StatusPill tone={score >= 6.5 ? "good" : score >= 5 ? "warn" : "bad"}>
-                {category ?? status.label}
-              </StatusPill>
-              <p className="text-lg font-bold leading-snug">
-                {saved ? `Latest model category: ${saved.result.category}` : status.headline}
+      <div className="grid gap-4 lg:grid-cols-[1.06fr_0.94fr]">
+        <Panel hover className="relative overflow-hidden">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-mb-cyan/12 blur-3xl" />
+          <div className="relative flex flex-col gap-5 md:flex-row md:items-center">
+            <div className="relative shrink-0">
+              <div className="absolute inset-0 rounded-full bg-mb-cyan/20 blur-2xl animate-pulse" />
+              <ScoreGauge score={score ?? 0} />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-mb-cyan">Your latest model result</p>
+              <h2 className="mt-2 text-2xl font-extrabold">{category ?? status?.label ?? "Ready when you are"}</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {status?.headline ?? "Complete an assessment to see your personalized score."}
               </p>
-              <p className="text-sm text-muted-foreground">
-                This score comes from a trained Random Forest model using the answers from your latest assessment.
-                {storedResult?.model_version && !saved ? ` Model ${storedResult.model_version}.` : ""}
-              </p>
-              <p className="flex items-start gap-2 text-xs leading-relaxed text-muted-foreground/80">
-                <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-mb-cyan" />
-                <span>
-                This is an educational estimate, not a medical diagnosis. If you are struggling, please reach out to a
-                qualified professional.
+
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                {score !== null ? (
+                  <StatusPill tone={score >= 6.5 ? "good" : score >= 5 ? "warn" : "bad"}>{category ?? status?.label}</StatusPill>
+                ) : null}
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-muted-foreground">
+                  Educational estimate · not a diagnosis
                 </span>
-              </p>
+              </div>
             </div>
           </div>
-        ) : (
-          <div className="rounded-2xl border border-mb-amber/30 bg-mb-amber/10 p-4 text-sm">
-            <p className="font-semibold text-mb-amber">No score yet</p>
-            <p className="mt-1 text-muted-foreground">
-              Your answers are saved, but the prediction model service hasn't returned a score. Once the model service
-              is connected, your score will appear here — nothing is ever estimated or made up.
-            </p>
+
+          <div className="relative mt-5 rounded-2xl border border-white/10 bg-black/15 p-4 backdrop-blur-md">
+            <div className="flex items-start gap-3">
+              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-mb-cyan" />
+              <div>
+                <p className="text-sm font-bold">Your balance right now: {balance}%</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                  This is a visual balance indicator from your five lifestyle inputs, not a second prediction score.
+                </p>
+              </div>
+            </div>
           </div>
-        )}
-      </Panel>
+        </Panel>
 
         <Panel hover className="relative overflow-hidden">
-          <div className="mb-4 flex items-start justify-between">
-            <SectionTitle sub="How your five key areas balance out.">Wellness Profile</SectionTitle>
+          <div className="mb-2 flex items-start justify-between gap-3">
+            <SectionTitle sub="Five everyday signals, shaped by your latest answers.">Wellness Profile</SectionTitle>
             <Dialog open={openThreeD} onOpenChange={setOpenThreeD}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 rounded-full border-mb-line bg-mb-panel-2 px-3 text-xs hover:border-mb-cyan/60 hover:bg-mb-panel-2 hover:text-mb-cyan">
+                <Button variant="outline" size="sm" className="h-8 rounded-full border-white/15 bg-white/5 px-3 text-xs backdrop-blur-md hover:border-mb-cyan/50 hover:bg-white/10 hover:text-mb-cyan">
                   3D View
                 </Button>
               </DialogTrigger>
-              <DialogContent className="mb-theme max-w-xl border-mb-line bg-mb-panel text-foreground">
-                <DialogHeader>
-                  <DialogTitle>Wellness Profile · 3D</DialogTitle>
-                </DialogHeader>
+              <DialogContent className="mb-theme max-w-xl border-white/15 bg-mb-panel/95 text-foreground backdrop-blur-2xl">
+                <DialogHeader><DialogTitle>Wellness Profile · 3D</DialogTitle></DialogHeader>
                 <Radar3D data={radar} />
               </DialogContent>
             </Dialog>
           </div>
-          <div className="relative min-h-[278px]">
+          <div className="relative min-h-[250px]">
             <div className="pointer-events-none absolute inset-x-1/4 top-1/4 h-36 rounded-full bg-mb-cyan/10 blur-3xl" />
             <RadarChart data={radar} />
           </div>
         </Panel>
       </div>
 
-        <Panel hover>
-          <SectionTitle sub="Your latest daily rhythm at a glance.">Lifestyle Overview</SectionTitle>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
-            {cards.map((c) => {
-              const art = LIFESTYLE_ART[c.key];
-              return (
-                <div
-                  key={c.key}
-                  className="group relative min-h-[150px] overflow-hidden rounded-xl border border-mb-line bg-gradient-to-br from-mb-panel-2 to-mb-panel p-3.5 transition-all duration-300 hover:-translate-y-1 hover:border-mb-cyan/35 hover:shadow-mb-glow"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <img src={art} alt="" width={72} height={72} loading="lazy" className="h-14 w-14 object-contain drop-shadow-lg transition duration-300 group-hover:scale-110 group-hover:-rotate-2" />
-                    <StatusPill tone={c.tone}>{c.tag}</StatusPill>
-                  </div>
-                  <p className="mt-2 text-xl font-extrabold">
-                    {c.value}
-                    {c.unit ? <span className="ml-1 text-xs font-medium text-muted-foreground">{c.unit}</span> : null}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{c.label}</p>
+      <Panel hover className="overflow-hidden">
+        <SectionTitle sub="Your everyday rhythm — not a judgment, just a snapshot.">Your Wellness Rhythm</SectionTitle>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+          {cards.map((card) => {
+            const art = LIFESTYLE_ART[card.key];
+            return (
+              <div key={card.key} className="group relative min-h-[155px] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-3.5 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-mb-cyan/30 hover:bg-white/[0.07] hover:shadow-mb-glow">
+                <div className="absolute -right-5 -top-5 h-20 w-20 rounded-full bg-mb-cyan/8 blur-2xl transition group-hover:bg-mb-cyan/15" />
+                <div className="relative flex items-start justify-between gap-2">
+                  <img src={art} alt="" width={72} height={72} loading="lazy" className="h-14 w-14 object-contain drop-shadow-lg transition duration-500 group-hover:scale-110 group-hover:-rotate-3" />
+                  <StatusPill tone={card.tone}>{card.tag}</StatusPill>
                 </div>
-              );
-            })}
-          </div>
-        </Panel>
+                <p className="relative mt-2 text-xl font-extrabold">
+                  {card.value}{card.unit ? <span className="ml-1 text-xs font-medium text-muted-foreground">{card.unit}</span> : null}
+                </p>
+                <p className="relative text-xs text-muted-foreground">{card.label}</p>
+              </div>
+            );
+          })}
+        </div>
+      </Panel>
 
       <div className="grid gap-4 lg:grid-cols-[1.08fr_0.92fr]">
-      <Panel hover className="overflow-hidden">
-        <SectionTitle sub="Importance values reported by the trained model for your prediction.">
-          Key Factors Affecting Your Score
-        </SectionTitle>
-        {storedResult && !saved && storedResult.feature_importance.length > 0 ? (
+        <Panel hover>
+          <SectionTitle sub="This map changes with your own answers. Lower bars simply show where more care may help.">Your Personal Focus Map</SectionTitle>
           <div className="space-y-4">
-            {storedResult.feature_importance.map((f, i) => (
-              <div key={f.feature}>
-                <div className="mb-1.5 flex items-center justify-between text-sm">
-                  <span className="font-medium capitalize">{prettyFeature(f.feature)}</span>
-                  <span className="text-muted-foreground">{f.importance.toFixed(3)}</span>
+            {radar.map((item, index) => (
+              <div key={item.label}>
+                <div className="mb-1.5 flex items-center justify-between gap-3 text-sm">
+                  <span className="font-semibold">{item.label}</span>
+                  <span className="text-xs text-muted-foreground">{Math.round(item.value * 100)}%</span>
                 </div>
-                <div className="h-2.5 overflow-hidden rounded-full border border-mb-line bg-mb-sidebar/60">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-mb-cyan via-primary to-mb-violet shadow-[0_0_14px_var(--mb-cyan)]"
-                    style={{
-                      width: `${(f.importance / maxImportance) * 100}%`,
-                      transition: `width 1.1s cubic-bezier(0.22,1,0.36,1) ${i * 90}ms`,
-                    }}
-                  />
+                <div className="h-3 overflow-hidden rounded-full border border-white/10 bg-black/20">
+                  <div className="h-full rounded-full bg-gradient-to-r from-mb-cyan via-primary to-mb-violet shadow-[0_0_18px_rgba(34,211,238,.3)] transition-all duration-1000" style={{ width: Math.round(item.value * 100) + "%", transitionDelay: index * 90 + "ms" }} />
                 </div>
               </div>
             ))}
           </div>
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            The latest prediction did not include factor-importance values.
-          </p>
-        )}
-      </Panel>
+        </Panel>
 
-      <Panel hover>
-        <SectionTitle sub="Guidance returned for your latest completed assessment.">
-          Your Personalized Insights
-        </SectionTitle>
-        {saved ? (
-          <PredictionSections result={saved.result} compact />
-        ) : (
-          <div className="grid gap-3">
-          {derivedInsights.map((ins) => {
-            const art = LIFESTYLE_ART[ins.key];
-            return (
-              <div
-                key={ins.key}
-                className="group flex items-center gap-3 rounded-xl border border-mb-line bg-gradient-to-r from-mb-panel-2 to-mb-panel p-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-mb-cyan/40"
-              >
-                <img src={art} alt="" width={48} height={48} loading="lazy" className="h-10 w-10 shrink-0 object-contain" />
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-semibold">{ins.title}</span>
-                  <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">{ins.text}</span>
-                </span>
-              </div>
-            );
-          })}
+        <Panel hover className="relative overflow-hidden">
+          <div className="absolute -bottom-16 -right-10 h-40 w-40 rounded-full bg-mb-violet/15 blur-3xl" />
+          <div className="relative">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-mb-cyan">
+              <FocusIcon className="h-4 w-4" /> Gentle focus
+            </div>
+            <h3 className="mt-3 text-2xl font-extrabold">{focusInfo.title}</h3>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{focusInfo.text}</p>
+            <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.045] p-4 backdrop-blur-md">
+              <p className="font-hand text-xl leading-relaxed text-foreground/90">“You are allowed to grow slowly. A life is built from small moments.”</p>
+            </div>
+            <Link to="/insights" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-mb-cyan transition hover:gap-3">
+              Turn this into a plan <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
-        )}
-      </Panel>
+        </Panel>
       </div>
 
-      <section className="relative isolate overflow-hidden rounded-2xl border border-mb-cyan/20 p-5 shadow-mb-card md:p-6">
-        <img src={quoteArt} alt="" loading="lazy" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-35" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-mb-sidebar via-mb-panel/95 to-mb-cyan/20" />
-        <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-          <div>
-            <p className="flex items-center gap-2 text-base font-bold">
-              <Sparkles className="h-4 w-4" /> Remember
-            </p>
-            <p className="mt-1 max-w-xl text-sm text-foreground/80">
-              You're not alone. Reaching out is a sign of strength — talking to someone you trust can make a real
-              difference.
-            </p>
+      <section className="relative isolate overflow-hidden rounded-[26px] border border-white/10 shadow-mb-card">
+        <img src={quoteArt} alt="" loading="lazy" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-30" />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(2,10,25,.96),rgba(8,24,45,.88),rgba(16,32,58,.45))]" />
+        <div className="relative flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between md:p-7">
+          <div className="max-w-2xl">
+            <p className="flex items-center gap-2 text-base font-bold"><Heart className="h-4 w-4 text-mb-cyan" /> Keep this close</p>
+            <p className="mt-2 text-lg leading-relaxed text-white/85">“Your worth was never a number. Let the number be a mirror, not a label.”</p>
           </div>
-          <Link
-            to="/insights"
-            className="rounded-xl bg-foreground px-5 py-2.5 text-sm font-bold text-background shadow-mb-glow transition hover:-translate-y-0.5"
-          >
-            Get Support
+          <Link to="/chat" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur-md transition hover:bg-white/15">
+            Talk it through <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>
