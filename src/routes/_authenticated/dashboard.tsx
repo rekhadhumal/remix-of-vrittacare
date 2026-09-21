@@ -129,7 +129,7 @@ function Hero({ name }: { name: string | null }) {
   );
 }
 
-export function DashboardBody({ data, saved = null }: { data?: DashboardData; saved?: SavedPrediction | null }) {
+export function DashboardBody({ data, saved = null }: { data: DashboardData | undefined; saved?: SavedPrediction | null }) {
   const [openThreeD, setOpenThreeD] = useState(false);
   const assessment = saved?.assessment ?? data?.assessment;
   if (!assessment) return null;
