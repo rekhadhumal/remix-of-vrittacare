@@ -2,15 +2,19 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { AppShell } from "@/components/mb/app-shell";
+import { PredictionSections } from "@/components/mb/prediction-sections";
 import { Panel, SectionTitle } from "@/components/mb/primitives";
-import { loadPrediction, type PredictionResponse } from "@/lib/prediction";
+import { RadarChart } from "@/components/mb/radar-chart";
+import { ScoreGauge } from "@/components/mb/score-gauge";
+import { radarValues } from "@/lib/mb";
+import { loadPrediction, type SavedPrediction } from "@/lib/prediction";
 
 export const Route = createFileRoute("/_authenticated/results")({
   head: () => ({
     meta: [
-      { title: "My Results · MindBalance" },
-      { name: "description", content: "Review your MindBalance assessment result from the prediction model." },
-      { property: "og:title", content: "My Results · MindBalance" },
+      { title: "My Results · VRITTACARE" },
+      { name: "description", content: "Review your VRITTACARE assessment result from the prediction model." },
+      { property: "og:title", content: "My Results · VRITTACARE" },
       { property: "og:description", content: "Review your wellness result from the prediction model." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -20,11 +24,11 @@ export const Route = createFileRoute("/_authenticated/results")({
 });
 
 function ResultsPage() {
-  const [result, setResult] = useState<PredictionResponse | null>(null);
+  const [saved, setSaved] = useState<SavedPrediction | null>(null);
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    setResult(loadPrediction());
+    setSaved(loadPrediction());
     setChecked(true);
   }, []);
 
@@ -35,25 +39,26 @@ function ResultsPage() {
           My Results
         </SectionTitle>
 
-        {!checked ? null : result ? (
+        {!checked ? null : saved ? (
           <div className="grid gap-4">
-            <div className="rounded-2xl border border-white/12 bg-mb-panel-2 p-6 text-center">
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Mental Health Score
-              </p>
-              <p className="mt-2 bg-gradient-to-r from-mb-cyan to-mb-violet bg-clip-text text-5xl font-bold text-transparent">
-                {result.score}
-              </p>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Category: <span className="font-semibold text-foreground">{result.category}</span>
-              </p>
+            <div className={saved.assessment ? "grid gap-4 lg:grid-cols-2" : "grid gap-4"}>
+              <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-mb-line bg-mb-panel-2 p-6 text-center sm:flex-row sm:gap-6">
+                <ScoreGauge score={saved.result.score} />
+                <div className="mt-3 sm:mt-0 sm:text-left">
+                  <p className="text-xs font-medium uppercase text-muted-foreground">Mental Health Score</p>
+                  <p className="mt-2 text-lg font-bold text-foreground">{saved.result.category}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Latest model category</p>
+                </div>
+              </div>
+              {saved.assessment ? (
+                <div className="min-h-[300px] rounded-2xl border border-mb-line bg-mb-panel-2 p-4">
+                  <p className="text-sm font-bold">Latest Assessment Profile</p>
+                  <RadarChart data={radarValues(saved.assessment)} />
+                </div>
+              ) : null}
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3">
-              <StatusChip label="Needs Attention" active={result.needs_attention} tone="bad" />
-              <StatusChip label="Watch" active={result.watch} tone="warn" />
-              <StatusChip label="Stable" active={result.stable} tone="good" />
-            </div>
+            <PredictionSections result={saved.result} />
 
             <div className="text-center">
               <Link
@@ -81,32 +86,5 @@ function ResultsPage() {
         )}
       </Panel>
     </AppShell>
-  );
-}
-
-function StatusChip({
-  label,
-  active,
-  tone,
-}: {
-  label: string;
-  active: boolean;
-  tone: "good" | "warn" | "bad";
-}) {
-  const tones = {
-    good: "border-emerald-400/40 bg-emerald-500/10 text-emerald-200",
-    warn: "border-amber-400/40 bg-amber-500/10 text-amber-200",
-    bad: "border-red-400/40 bg-red-500/10 text-red-200",
-  } as const;
-
-  return (
-    <div
-      className={`rounded-xl border px-4 py-3 text-center text-sm font-medium transition ${
-        active ? tones[tone] : "border-white/12 bg-mb-panel-2 text-muted-foreground opacity-50"
-      }`}
-    >
-      {label}
-      {active && <span className="ml-1.5">●</span>}
-    </div>
   );
 }

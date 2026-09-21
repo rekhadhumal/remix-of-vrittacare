@@ -2,11 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
-  ChevronRight,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import heroInclusive from "@/assets/mindbalance-hero-inclusive.jpg";
 import iconActivity from "@/assets/icon-activity.png";
@@ -17,6 +16,7 @@ import iconStudy from "@/assets/icon-study.png";
 import quoteArt from "@/assets/quote-art.jpg";
 import { AppShell } from "@/components/mb/app-shell";
 import { AssistantPanel } from "@/components/mb/assistant-panel";
+import { PredictionSections } from "@/components/mb/prediction-sections";
 import { Panel, SectionTitle, StatusPill } from "@/components/mb/primitives";
 import { Radar3D, RadarChart } from "@/components/mb/radar-chart";
 import { ScoreGauge } from "@/components/mb/score-gauge";
@@ -31,16 +31,17 @@ import {
   scoreStatus,
   type DashboardData,
 } from "@/lib/mb";
+import { loadPrediction, type SavedPrediction } from "@/lib/prediction";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Your Wellness Dashboard · MindBalance" },
+      { title: "Your Wellness Dashboard · VRITTACARE" },
       {
         name: "description",
         content: "See your mental health score, wellness profile, lifestyle overview and personalized insights.",
       },
-      { property: "og:title", content: "Your Wellness Dashboard · MindBalance" },
+      { property: "og:title", content: "Your Wellness Dashboard · VRITTACARE" },
       { property: "og:description", content: "Your score, habits and personalized guidance in one place." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -60,6 +61,11 @@ const LIFESTYLE_ART = {
 function DashboardPage() {
   const fetchData = useServerFn(getDashboardData);
   const { data, isLoading } = useQuery<DashboardData>({ queryKey: ["dashboard"], queryFn: () => fetchData() });
+  const [saved, setSaved] = useState<SavedPrediction | null>(null);
+
+  useEffect(() => {
+    setSaved(loadPrediction());
+  }, []);
 
   return (
     <AppShell aside={<AssistantPanel />}>
@@ -69,7 +75,7 @@ function DashboardPage() {
         <Panel className="border-mb-cyan/15 bg-gradient-to-br from-mb-panel to-mb-panel-2/55">
           <p className="text-sm text-muted-foreground">Loading your dashboard…</p>
         </Panel>
-      ) : !data?.assessment ? (
+      ) : !saved?.assessment && !data?.assessment ? (
         <Panel>
           <SectionTitle sub="Take your first assessment to unlock your score, wellness profile and personalized insights.">
             Let's get started
@@ -82,7 +88,7 @@ function DashboardPage() {
           </Link>
         </Panel>
       ) : (
-        <DashboardBody data={data} />
+        <DashboardBody data={data} saved={saved} />
       )}
 
       <div className="xl:hidden">
@@ -123,17 +129,19 @@ function Hero({ name }: { name: string | null }) {
   );
 }
 
-export function DashboardBody({ data }: { data: DashboardData }) {
+export function DashboardBody({ data, saved = null }: { data: DashboardData | undefined; saved?: SavedPrediction | null }) {
   const [openThreeD, setOpenThreeD] = useState(false);
-  const assessment = data.assessment;
+  const assessment = saved?.assessment ?? data?.assessment;
   if (!assessment) return null;
-  const result = data.result;
-  const status = result ? scoreStatus(result.score) : null;
+  const storedResult = data?.result ?? null;
+  const score = saved?.result.score ?? storedResult?.score ?? null;
+  const category = saved?.result.category ?? storedResult?.status_label ?? null;
+  const status = score === null ? null : scoreStatus(score);
   const radar = radarValues(assessment);
   const cards = lifestyleCards(assessment);
-  const insights = buildInsights(assessment);
+  const derivedInsights = buildInsights(assessment);
 
-  const maxImportance = Math.max(0.0001, ...(result?.feature_importance ?? []).map((f) => f.importance));
+  const maxImportance = Math.max(0.0001, ...(storedResult?.feature_importance ?? []).map((f) => f.importance));
 
   return (
     <>
@@ -141,17 +149,19 @@ export function DashboardBody({ data }: { data: DashboardData }) {
       <Panel hover className="relative overflow-hidden">
         <div className="pointer-events-none absolute -left-16 top-12 h-44 w-44 rounded-full bg-mb-cyan/10 blur-3xl" />
         <SectionTitle sub="A clear view of your latest assessment.">Mental Health Score</SectionTitle>
-        {result && status ? (
+        {score !== null && status ? (
           <div className="relative flex min-h-[278px] flex-col items-center gap-5 md:flex-row md:items-center">
-            <ScoreGauge score={result.score} />
+            <ScoreGauge score={score} />
             <div className="flex-1 space-y-3 text-center md:text-left">
-              <StatusPill tone={result.score >= 6.5 ? "good" : result.score >= 5 ? "warn" : "bad"}>
-                {status.label}
+              <StatusPill tone={score >= 6.5 ? "good" : score >= 5 ? "warn" : "bad"}>
+                {category ?? status.label}
               </StatusPill>
-              <p className="text-lg font-bold leading-snug">{status.headline}</p>
+              <p className="text-lg font-bold leading-snug">
+                {saved ? `Latest model category: ${saved.result.category}` : status.headline}
+              </p>
               <p className="text-sm text-muted-foreground">
                 This score comes from a trained Random Forest model using the answers from your latest assessment.
-                {result.model_version ? ` Model ${result.model_version}.` : ""}
+                {storedResult?.model_version && !saved ? ` Model ${storedResult.model_version}.` : ""}
               </p>
               <p className="flex items-start gap-2 text-xs leading-relaxed text-muted-foreground/80">
                 <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-mb-cyan" />
@@ -227,9 +237,9 @@ export function DashboardBody({ data }: { data: DashboardData }) {
         <SectionTitle sub="Importance values reported by the trained model for your prediction.">
           Key Factors Affecting Your Score
         </SectionTitle>
-        {result && result.feature_importance.length > 0 ? (
+        {storedResult && !saved && storedResult.feature_importance.length > 0 ? (
           <div className="space-y-4">
-            {result.feature_importance.map((f, i) => (
+            {storedResult.feature_importance.map((f, i) => (
               <div key={f.feature}>
                 <div className="mb-1.5 flex items-center justify-between text-sm">
                   <span className="font-medium capitalize">{prettyFeature(f.feature)}</span>
@@ -249,22 +259,24 @@ export function DashboardBody({ data }: { data: DashboardData }) {
           </div>
         ) : (
           <p className="text-sm text-muted-foreground">
-            Factor importances appear here once the prediction model service returns them.
+            The latest prediction did not include factor-importance values.
           </p>
         )}
       </Panel>
 
       <Panel hover>
-        <SectionTitle sub="Gentle, practical suggestions based on what you told us.">
+        <SectionTitle sub="Guidance returned for your latest completed assessment.">
           Your Personalized Insights
         </SectionTitle>
-        <div className="grid gap-3">
-          {insights.map((ins) => {
+        {saved ? (
+          <PredictionSections result={saved.result} compact />
+        ) : (
+          <div className="grid gap-3">
+          {derivedInsights.map((ins) => {
             const art = LIFESTYLE_ART[ins.key];
             return (
-              <Link
+              <div
                 key={ins.key}
-                to="/insights"
                 className="group flex items-center gap-3 rounded-xl border border-mb-line bg-gradient-to-r from-mb-panel-2 to-mb-panel p-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-mb-cyan/40"
               >
                 <img src={art} alt="" width={48} height={48} loading="lazy" className="h-10 w-10 shrink-0 object-contain" />
@@ -272,11 +284,11 @@ export function DashboardBody({ data }: { data: DashboardData }) {
                   <span className="block text-sm font-semibold">{ins.title}</span>
                   <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">{ins.text}</span>
                 </span>
-                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-mb-cyan" />
-              </Link>
+              </div>
             );
           })}
-        </div>
+          </div>
+        )}
       </Panel>
       </div>
 

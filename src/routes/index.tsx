@@ -6,9 +6,9 @@ export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "MindBalance · Student Wellness" },
+      { title: "VRITTACARE · Student Wellness" },
       { name: "description", content: "Understand your wellness patterns through your saved habits and assessments." },
-      { property: "og:title", content: "MindBalance · Student Wellness" },
+      { property: "og:title", content: "VRITTACARE · Student Wellness" },
       { property: "og:description", content: "A private student wellness dashboard grounded in your own data." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
