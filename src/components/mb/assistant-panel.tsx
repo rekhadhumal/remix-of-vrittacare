@@ -65,7 +65,7 @@ export function AssistantPanel({ compact = false }: { compact?: boolean }) {
       <header className="relative flex items-center gap-3 border-b border-mb-line pb-4 after:absolute after:-bottom-px after:left-0 after:h-px after:w-20 after:bg-gradient-to-r after:from-mb-cyan after:to-transparent">
         <div className="relative">
           <span className="absolute inset-0 rounded-full bg-mb-cyan/20 blur-md" />
-          <img src={botAvatar} alt="Wellness Assistant" width={512} height={512} className="relative h-12 w-12 rounded-full border border-mb-cyan/35 bg-mb-panel-2 object-contain shadow-mb-glow" />
+          <img src={botAvatar} alt="Wellness Assistant" width={512} height={512} className="relative h-12 w-12 rounded-full border border-mb-cyan/35 bg-mb-panel-2 object-contain shadow-mb-glow transition duration-500 hover:-translate-y-1 hover:rotate-2 hover:scale-105" />
           <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-mb-sidebar bg-mb-green" />
         </div>
         <div className="min-w-0">
