@@ -48,22 +48,18 @@ const DEFAULTS: AssessmentInput = {
 
 function AssessmentPage() {
   const [form, setForm] = useState<AssessmentInput>(DEFAULTS);
-  const submit = useServerFn(submitAssessment);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: () => submit({ data: form }),
-    onSuccess: async (res) => {
-      await queryClient.invalidateQueries();
-      if (res.ok) {
-        toast.success("Your assessment was scored by the model.");
-      } else {
-        toast.warning(res.message);
-      }
+    mutationFn: () => predictMentalHealth(form),
+    onSuccess: (result) => {
+      savePrediction(result);
+      toast.success("Your assessment was scored by the model.");
       navigate({ to: "/results" });
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: (error: Error) => {
+      toast.error(error instanceof PredictionError ? error.message : `Prediction failed: ${error.message}`);
+    },
   });
 
   function set<K extends keyof AssessmentInput>(key: K, value: AssessmentInput[K]) {
