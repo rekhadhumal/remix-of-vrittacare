@@ -1,15 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  Brain,
-  ClipboardList,
-  Home,
-  Info,
-  LineChart,
-  LogOut,
-  MessageCircle,
-  Sparkles,
-} from "lucide-react";
+import { Brain, ClipboardList, Home, Info, LineChart, LogOut, MessageCircle, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
 import quoteArt from "@/assets/quote-art.jpg";
@@ -39,23 +30,30 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
   }
 
   return (
-    <div className="mb-theme min-h-screen bg-background font-sans text-foreground">
+    <div className="mb-theme relative min-h-screen overflow-hidden bg-[#020817] font-sans text-foreground">
+      <div className="pointer-events-none fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(34,211,238,.14),transparent_24%),radial-gradient(circle_at_82%_18%,rgba(124,58,237,.13),transparent_25%),linear-gradient(135deg,#020817_0%,#071a31_48%,#020817_100%)]" />
+        <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-mb-cyan/8 blur-[110px] animate-pulse" />
+        <div className="absolute -right-24 top-1/3 h-80 w-80 rounded-full bg-mb-violet/8 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-mb-cyan/5 blur-[100px]" />
+      </div>
+
       <div className="mx-auto flex min-h-screen max-w-[1920px]">
-        <aside className="sticky top-0 hidden h-screen w-[196px] shrink-0 flex-col justify-between border-r border-mb-line bg-mb-sidebar px-3.5 py-5 lg:flex">
+        <aside className="sticky top-0 hidden h-screen w-[220px] shrink-0 flex-col justify-between border-r border-white/10 bg-[#020817]/65 px-3.5 py-5 backdrop-blur-2xl lg:flex">
           <div>
-            <div className="flex items-center gap-2.5 px-1">
-              <span className="grid h-9 w-9 place-items-center rounded-xl border border-mb-cyan/25 bg-mb-cyan/10 text-mb-cyan shadow-[0_0_28px_-10px_var(--mb-cyan)]">
-                <Brain className="h-5 w-5" />
-              </span>
-              <div>
-                <p className="bg-gradient-to-r from-mb-cyan to-primary bg-clip-text text-[15px] font-extrabold leading-tight text-transparent">VRITTACARE</p>
-                <p className="max-w-[132px] text-[9px] leading-tight text-muted-foreground">
-                  Mental Health Prediction System
-                </p>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3 shadow-[0_20px_60px_-40px_rgba(34,211,238,.5)] backdrop-blur-xl">
+              <div className="flex items-center gap-2.5 px-1">
+                <span className="grid h-10 w-10 place-items-center rounded-xl border border-mb-cyan/25 bg-mb-cyan/10 text-mb-cyan shadow-[0_0_28px_-10px_var(--mb-cyan)]">
+                  <Brain className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="bg-gradient-to-r from-mb-cyan to-primary bg-clip-text text-[15px] font-extrabold leading-tight text-transparent">VRITTACARE</p>
+                  <p className="max-w-[145px] text-[9px] leading-tight text-muted-foreground">Mental Health Prediction System</p>
+                </div>
               </div>
             </div>
 
-            <nav className="mt-8 space-y-1">
+            <nav className="mt-7 space-y-1.5">
               {NAV.map((item) => {
                 const active = pathname === item.to;
                 return (
@@ -63,13 +61,14 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
                     key={item.to}
                     to={item.to}
                     className={cn(
-                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[12px] font-medium transition-all duration-200",
+                      "group relative flex items-center gap-3 overflow-hidden rounded-xl px-3 py-2.5 text-[12px] font-medium transition-all duration-300",
                       active
-                        ? "bg-gradient-to-r from-mb-cyan/20 to-primary/8 text-mb-cyan shadow-[inset_0_0_0_1px_var(--mb-line),0_8px_24px_-18px_var(--mb-cyan)]"
-                        : "text-muted-foreground hover:translate-x-0.5 hover:bg-mb-panel-2/60 hover:text-foreground",
+                        ? "bg-gradient-to-r from-mb-cyan/20 via-primary/10 to-transparent text-mb-cyan shadow-[inset_0_0_0_1px_rgba(255,255,255,.08),0_12px_30px_-22px_var(--mb-cyan)]"
+                        : "text-muted-foreground hover:translate-x-1 hover:bg-white/[0.045] hover:text-foreground",
                     )}
                   >
-                    <item.icon className="h-4 w-4" />
+                    {active ? <span className="absolute inset-y-2 left-0 w-0.5 rounded-full bg-mb-cyan shadow-[0_0_12px_var(--mb-cyan)]" /> : null}
+                    <item.icon className={cn("h-4 w-4 transition-transform duration-300 group-hover:scale-110", active && "text-mb-cyan")} />
                     {item.label}
                   </Link>
                 );
@@ -78,44 +77,36 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
           </div>
 
           <div className="space-y-3">
-            <div className="relative overflow-hidden rounded-2xl border border-mb-line">
-              <img src={quoteArt} alt="Calm scenic artwork" loading="lazy" className="h-36 w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-mb-sidebar via-mb-sidebar/20 to-transparent" />
-              <p className="absolute inset-x-3 bottom-3 font-hand text-lg font-semibold leading-tight text-foreground">
-                “Every day is a fresh start.”
-              </p>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3 backdrop-blur-xl">
+              <div className="relative overflow-hidden rounded-xl">
+                <img src={quoteArt} alt="Calm scenic artwork" loading="lazy" className="h-32 w-full object-cover transition duration-700 hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#020817] via-[#020817]/20 to-transparent" />
+                <p className="absolute inset-x-3 bottom-3 font-hand text-base font-semibold leading-tight text-white">“Every day is a fresh start.”</p>
+              </div>
+              <p className="mt-3 text-center text-[10px] leading-relaxed text-muted-foreground">Dreamed into reality by</p>
+              <p className="text-center text-[11px] font-bold text-foreground/90">Rutuja Dhumal & Vaibhav Solanke</p>
             </div>
-            <Button
-              onClick={signOut}
-              variant="ghost"
-              className="w-full justify-start gap-2 px-3 text-sm text-muted-foreground hover:bg-mb-panel-2/60 hover:text-foreground"
-            >
+
+            <Button onClick={signOut} variant="ghost" className="w-full justify-start gap-2 px-3 text-sm text-muted-foreground hover:bg-white/[0.045] hover:text-foreground">
               <LogOut className="h-4 w-4" /> Sign out
             </Button>
           </div>
         </aside>
 
-        <main className="min-w-0 flex-1 p-3 pb-20 sm:p-5 lg:pb-5 xl:p-5 2xl:p-6">
-          <div className="mx-auto max-w-[1140px] space-y-4">{children}</div>
+        <main className="min-w-0 flex-1 p-3 pb-20 sm:p-5 lg:pb-5 xl:p-6 2xl:p-7">
+          <div className="mx-auto max-w-[1180px] space-y-5">{children}</div>
         </main>
 
         {aside ? (
-          <aside className="sticky top-0 hidden h-screen w-[310px] shrink-0 border-l border-mb-line bg-mb-sidebar p-4 2xl:w-[350px] xl:block">
-            {aside}
+          <aside className="sticky top-0 hidden h-screen w-[320px] shrink-0 border-l border-white/10 bg-[#020817]/55 p-4 backdrop-blur-2xl 2xl:w-[350px] xl:block">
+            <div className="h-full rounded-2xl border border-white/10 bg-white/[0.025] p-3 backdrop-blur-xl">{aside}</div>
           </aside>
         ) : null}
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-mb-line bg-mb-sidebar/95 px-2 py-2 backdrop-blur-xl lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-white/10 bg-[#020817]/90 px-2 py-2 backdrop-blur-2xl lg:hidden">
         {NAV.map((item) => (
-          <Link
-            key={item.to}
-            to={item.to}
-            className={cn(
-              "flex flex-col items-center gap-1 rounded-lg px-2 py-1 text-[10px]",
-              pathname === item.to ? "text-foreground" : "text-muted-foreground",
-            )}
-          >
+          <Link key={item.to} to={item.to} className={cn("flex flex-col items-center gap-1 rounded-lg px-2 py-1 text-[10px]", pathname === item.to ? "text-mb-cyan" : "text-muted-foreground")}>
             <item.icon className="h-4 w-4" />
             {item.label.split(" ")[0]}
           </Link>
