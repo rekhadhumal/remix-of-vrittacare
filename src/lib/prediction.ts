@@ -34,7 +34,7 @@ function toPayload(a: AssessmentInput) {
     Most_Used_Platform: a.most_used_platform,
     Purpose_Of_Use: a.purpose_of_use,
     Avg_Daily_Usage_Hours: a.avg_daily_usage_hours,
-    Daily_Unlocks: a.daily_unlocks,
+    DailyUnlocks: a.daily_unlocks,
     Study_Hours: a.study_hours,
     Physical_Activity_Hours: a.physical_activity_hours,
     Sleep_Hours_Per_Night: a.sleep_hours_per_night,
@@ -45,15 +45,78 @@ function toPayload(a: AssessmentInput) {
 
 function toItems(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
-  return value.filter((item): item is string => typeof item === "string" && item.trim().length > 0);
+
+  return value
+    .map((item) => {
+      // Support old string-format items
+      if (typeof item === "string") {
+        return item.trim();
+      }
+
+      // Ignore invalid items
+      if (!item || typeof item !== "object") return "";
+
+      // Support the actual FastAPI object response
+      const entry = item as {
+        area?: unknown;
+        current_value?: unknown;
+        interpretation?: unknown;
+        message?: unknown;
+        estimated_score_change?: unknown;
+      };
+
+      const area =
+        typeof entry.area === "string"
+          ? entry.area.trim()
+          : "";
+
+      const interpretation =
+        typeof entry.interpretation === "string"
+          ? entry.interpretation.trim()
+          : "";
+
+      const message =
+        typeof entry.message === "string"
+          ? entry.message.trim()
+          : "";
+
+      const currentValue =
+        typeof entry.current_value === "string" ||
+        typeof entry.current_value === "number"
+          ? String(entry.current_value)
+          : "";
+
+      const change =
+        typeof entry.estimated_score_change === "number" &&
+        Number.isFinite(entry.estimated_score_change)
+          ? ` (estimated score change: +${entry.estimated_score_change.toFixed(2)})`
+          : "";
+
+      const details = [
+        area,
+        currentValue ? `Current: ${currentValue}` : "",
+        interpretation,
+        message,
+      ].filter(Boolean);
+
+      return details.length > 0
+        ? `${details.join(" — ")}${change}`
+        : "";
+    })
+    .filter((item): item is string => item.length > 0);
 }
 
-export async function predictMentalHealth(a: AssessmentInput): Promise<PredictionResponse> {
+export async function predictMentalHealth(
+  a: AssessmentInput,
+): Promise<PredictionResponse> {
   let response: Response;
+
   try {
     response = await fetch(PREDICTION_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(toPayload(a)),
     });
   } catch {
@@ -64,37 +127,65 @@ export async function predictMentalHealth(a: AssessmentInput): Promise<Predictio
 
   if (!response.ok) {
     const body = await response.text().catch(() => "");
+
     throw new PredictionError(
       `The prediction server returned an error (${response.status}). ${body.slice(0, 200)}`.trim(),
     );
   }
 
   let raw: unknown;
+
   try {
     raw = await response.json();
   } catch {
-    throw new PredictionError("The prediction server returned a response that was not valid JSON.");
+    throw new PredictionError(
+      "The prediction server returned a response that was not valid JSON.",
+    );
   }
 
-  const r = raw as Partial<Record<keyof PredictionResponse, unknown>>;
-  if (typeof r.score !== "number" || Number.isNaN(r.score)) {
-    throw new PredictionError("The prediction server response did not include a numeric score.");
+  const r = raw as Partial<
+    Record<keyof PredictionResponse, unknown>
+  >;
+
+  if (
+    typeof r.score !== "number" ||
+    Number.isNaN(r.score)
+  ) {
+    throw new PredictionError(
+      "The prediction server response did not include a numeric score.",
+    );
   }
 
   return {
     score: r.score,
-    category: typeof r.category === "string" ? r.category : "Unknown",
+
+    category:
+      typeof r.category === "string"
+        ? r.category
+        : "Unknown",
+
     needs_attention: toItems(r.needs_attention),
+
     watch: toItems(r.watch),
+
     stable: toItems(r.stable),
   };
 }
 
 const STORAGE_KEY = "vrittacare:lastPrediction";
 
-export function savePrediction(result: PredictionResponse, assessment: AssessmentInput) {
+export function savePrediction(
+  result: PredictionResponse,
+  assessment: AssessmentInput,
+) {
   try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ result, assessment } satisfies SavedPrediction));
+    sessionStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        result,
+        assessment,
+      } satisfies SavedPrediction),
+    );
   } catch {
     // storage unavailable — results page will prompt to retake
   }
@@ -103,23 +194,51 @@ export function savePrediction(result: PredictionResponse, assessment: Assessmen
 export function loadPrediction(): SavedPrediction | null {
   try {
     const raw = sessionStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as unknown;
-    if (!parsed || typeof parsed !== "object") return null;
 
-    const saved = parsed as Partial<SavedPrediction> & Partial<PredictionResponse>;
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw) as unknown;
+
+    if (!parsed || typeof parsed !== "object") {
+      return null;
+    }
+
+    const saved =
+      parsed as Partial<SavedPrediction> &
+        Partial<PredictionResponse>;
+
     const result = saved.result ?? saved;
-    if (typeof result.score !== "number" || Number.isNaN(result.score)) return null;
+
+    if (
+      typeof result.score !== "number" ||
+      Number.isNaN(result.score)
+    ) {
+      return null;
+    }
 
     return {
       result: {
         score: result.score,
-        category: typeof result.category === "string" ? result.category : "Unknown",
-        needs_attention: toItems(result.needs_attention),
+
+        category:
+          typeof result.category === "string"
+            ? result.category
+            : "Unknown",
+
+        needs_attention: toItems(
+          result.needs_attention,
+        ),
+
         watch: toItems(result.watch),
+
         stable: toItems(result.stable),
       },
-      assessment: saved.assessment && typeof saved.assessment === "object" ? saved.assessment : null,
+
+      assessment:
+        saved.assessment &&
+        typeof saved.assessment === "object"
+          ? saved.assessment
+          : null,
     };
   } catch {
     return null;
