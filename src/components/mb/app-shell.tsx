@@ -77,14 +77,23 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
           </div>
 
           <div className="space-y-3">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3 backdrop-blur-xl">
-              <div className="relative overflow-hidden rounded-xl">
-                <img src={quoteArt} alt="Calm scenic artwork" loading="lazy" className="h-32 w-full object-cover transition duration-700 hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#020817] via-[#020817]/20 to-transparent" />
-                <p className="absolute inset-x-3 bottom-3 font-hand text-base font-semibold leading-tight text-white">“Every day is a fresh start.”</p>
+            <div className="group relative overflow-hidden rounded-2xl border border-mb-cyan/15 bg-gradient-to-br from-mb-cyan/[0.08] via-white/[0.035] to-mb-violet/[0.08] p-3.5 backdrop-blur-xl shadow-[0_24px_70px_-50px_rgba(34,211,238,.8)]">
+              <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-mb-cyan/15 blur-2xl transition duration-700 group-hover:bg-mb-cyan/25" />
+              <div className="relative rounded-xl border border-white/10 bg-black/15 p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="grid h-8 w-8 place-items-center rounded-full border border-mb-cyan/20 bg-mb-cyan/10 text-mb-cyan">✦</span>
+                  <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-mb-cyan">A thought to carry</span>
+                </div>
+                <p className="font-serif text-sm font-semibold italic leading-relaxed text-white/90">
+                  “You are not behind. Keep walking — even a quiet step can change the direction of a life.”
+                </p>
               </div>
-              <p className="mt-3 text-center text-[10px] leading-relaxed text-muted-foreground">Dreamed into reality by</p>
-              <p className="text-center text-[11px] font-bold text-foreground/90">Rutuja Dhumal & Vaibhav Solanke</p>
+              <div className="relative mt-3 text-center">
+                <p className="text-[9px] uppercase tracking-[0.16em] text-muted-foreground">Dreamed into reality by</p>
+                <p className="mt-1 text-[11px] font-bold text-foreground/90">Vaibhav Solanke</p>
+                <p className="text-[9px] text-mb-cyan">&</p>
+                <p className="text-[11px] font-bold text-foreground/90">Rutuja Dhumal</p>
+              </div>
             </div>
 
             <Button onClick={signOut} variant="ghost" className="w-full justify-start gap-2 px-3 text-sm text-muted-foreground hover:bg-white/[0.045] hover:text-foreground">
