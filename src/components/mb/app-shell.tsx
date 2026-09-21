@@ -3,7 +3,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Brain, ClipboardList, Home, Info, LineChart, LogOut, MessageCircle, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
-import quoteArt from "@/assets/quote-art.jpg";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
