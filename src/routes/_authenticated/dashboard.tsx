@@ -14,7 +14,8 @@ import quoteArt from "@/assets/quote-art.jpg";
 import { AppShell } from "@/components/mb/app-shell";
 import { AssistantPanel } from "@/components/mb/assistant-panel";
 import { Panel, SectionTitle, StatusPill } from "@/components/mb/primitives";
-import { Radar3D, RadarChart } from "@/components/mb/radar-chart";
+import { Radar3D } from "@/components/mb/radar-chart";
+import { AdaptiveProfile } from "@/components/mb/adaptive-profile";
 import { ScoreGauge } from "@/components/mb/score-gauge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -135,9 +136,12 @@ function Hero({ name, score }: { name: string | null; score: number | null }) {
       <img src={heroInclusive} alt="Students sharing a peaceful mountain view" className="absolute inset-0 h-full w-full object-cover object-center transition duration-[1400ms] group-hover:scale-[1.025]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(34,211,238,.18),transparent_30%),linear-gradient(90deg,rgba(2,10,25,.96)_0%,rgba(3,15,35,.78)_42%,rgba(3,15,35,.12)_100%)]" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/10" />
-      <div className="absolute right-8 top-8 hidden h-24 w-24 rounded-full border border-white/10 bg-white/5 shadow-[inset_0_0_35px_rgba(255,255,255,.08)] backdrop-blur-md md:block">
-        <div className="absolute inset-4 rounded-full bg-mb-cyan/20 blur-xl" />
-        <div className="absolute inset-7 rounded-full border border-mb-cyan/50 bg-mb-cyan/10 animate-pulse" />
+      <div className="absolute right-10 top-8 hidden md:block">
+        <div className="relative h-28 w-28 rounded-full border border-mb-cyan/20 bg-white/[0.035] shadow-[0_0_45px_-18px_rgba(34,211,238,.8)] backdrop-blur-md animate-[spin_16s_linear_infinite]">
+          <div className="absolute inset-5 rounded-full border border-white/15" />
+          <div className="absolute left-1/2 top-1 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-mb-cyan shadow-[0_0_18px_rgba(34,211,238,.9)]" />
+          <div className="absolute inset-8 rounded-full bg-mb-cyan/10 blur-md" />
+        </div>
       </div>
 
       <div className="relative flex min-h-[290px] max-w-[650px] flex-col justify-center px-6 py-10 md:px-9">
@@ -149,7 +153,9 @@ function Hero({ name, score }: { name: string | null; score: number | null }) {
           {status ? status.headline + " " : ""}
           This is a space to understand your habits without judging yourself.
         </p>
-        <p className="mt-4 max-w-lg font-hand text-2xl leading-tight text-white/90">“{quote}”</p>
+        <div className="mt-5 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.055] px-4 py-3 backdrop-blur-md shadow-[0_16px_40px_-28px_rgba(34,211,238,.6)]">
+          <p className="text-lg font-serif font-semibold italic leading-relaxed tracking-[0.01em] text-white/95 md:text-xl">“{quote}”</p>
+        </div>
 
         <div className="mt-6 flex flex-wrap gap-3">
           <Link to="/assessment" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-mb-cyan to-primary px-5 py-3 text-sm font-bold text-primary-foreground shadow-mb-glow transition hover:-translate-y-0.5 hover:brightness-110">
@@ -245,7 +251,7 @@ export function DashboardBody({ data, saved = null }: { data: DashboardData | un
           </div>
           <div className="relative min-h-[250px]">
             <div className="pointer-events-none absolute inset-x-1/4 top-1/4 h-36 rounded-full bg-mb-cyan/10 blur-3xl" />
-            <RadarChart data={radar} />
+            <AdaptiveProfile assessment={assessment} data={radar} />
           </div>
         </Panel>
       </div>
