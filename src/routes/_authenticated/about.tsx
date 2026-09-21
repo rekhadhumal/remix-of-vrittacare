@@ -91,27 +91,58 @@ function AboutPage() {
         </div>
 
         <Panel>
-          <SectionTitle sub="The people who turned the idea into a working project.">Dreamed into reality by</SectionTitle>
+          <SectionTitle sub="Two contributors, different strengths, one complete student project.">Project Team & Contributions</SectionTitle>
           <div className="grid gap-4 md:grid-cols-2">
             <article className="rounded-2xl border border-mb-cyan/15 bg-gradient-to-br from-mb-cyan/[0.08] to-transparent p-5">
               <div className="flex items-center gap-3">
                 <div className="grid h-11 w-11 place-items-center rounded-xl bg-mb-cyan/10 text-mb-cyan"><UserRound className="h-5 w-5" /></div>
-                <div><h3 className="font-bold">Rutuja Dhumal</h3><p className="text-xs text-muted-foreground">Project development & experience</p></div>
+                <div>
+                  <h3 className="font-extrabold tracking-wide">RUTUJA DHUMAL</h3>
+                  <p className="text-xs text-muted-foreground">ML workflow, backend integration & product experience</p>
+                </div>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Rutuja shaped the project workflow, machine-learning pipeline integration and the student-facing experience, bringing together the technical work and the calm visual direction of VRITTACARE.
+                Rutuja led the core data-science workflow from understanding and cleaning the student dataset through EDA, feature engineering, model building and tuning. She also carried the prediction workflow into a FastAPI service and helped shape the student-facing VRITTACARE experience so that model output becomes understandable guidance rather than a raw number.
               </p>
+              <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-mb-cyan">
+                <span className="rounded-full border border-mb-cyan/15 bg-mb-cyan/5 px-3 py-1">Data Science</span>
+                <span className="rounded-full border border-mb-cyan/15 bg-mb-cyan/5 px-3 py-1">Machine Learning</span>
+                <span className="rounded-full border border-mb-cyan/15 bg-mb-cyan/5 px-3 py-1">FastAPI</span>
+                <span className="rounded-full border border-mb-cyan/15 bg-mb-cyan/5 px-3 py-1">Product UX</span>
+              </div>
+              <a href="https://github.com/rutuu0228" target="_blank" rel="noreferrer" className="mt-4 inline-flex text-xs font-bold text-mb-cyan hover:underline">
+                View GitHub profile →
+              </a>
             </article>
 
             <article className="rounded-2xl border border-mb-violet/15 bg-gradient-to-br from-mb-violet/[0.08] to-transparent p-5">
               <div className="flex items-center gap-3">
                 <div className="grid h-11 w-11 place-items-center rounded-xl bg-mb-violet/10 text-mb-violet"><UserRound className="h-5 w-5" /></div>
-                <div><h3 className="font-bold">Vaibhav Solanke</h3><p className="text-xs text-muted-foreground">Project development & collaboration</p></div>
+                <div>
+                  <h3 className="font-extrabold tracking-wide">VAIBHAV SOLANKE</h3>
+                  <p className="text-xs text-muted-foreground">Project foundation, data understanding & collaboration</p>
+                </div>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Vaibhav contributed to the project journey and collaborative development, helping shape the system into a complete, presentation-ready student wellness application.
+                Vaibhav contributed to the project's early technical foundation: he worked on the initial dataset-understanding stage and project dependency setup, helping establish the base that the later modeling and web layers were built on. He also collaborated on the product journey, contributing to the direction that grew into the complete VRITTACARE application.
               </p>
+              <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-mb-violet">
+                <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Data Understanding</span>
+                <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Project Setup</span>
+                <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Technical Collaboration</span>
+                <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Product Direction</span>
+              </div>
+              <a href="https://github.com/vaibhavvsolanke" target="_blank" rel="noreferrer" className="mt-4 inline-flex text-xs font-bold text-mb-violet hover:underline">
+                View GitHub profile →
+              </a>
             </article>
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-mb-cyan">Why the project matters</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              VRITTACARE brings together a complete student-project lifecycle: a real dataset, a regression model, preprocessing and evaluation, a Python prediction API, persistent application data, authentication, and a user interface that explains the result in simple language. The goal is not to replace professional mental-health care, but to demonstrate how data science can be translated into a responsible, understandable digital experience.
+            </p>
           </div>
 
           <p className="mt-6 text-center font-serif italic tracking-wide text-xl text-foreground/80">
