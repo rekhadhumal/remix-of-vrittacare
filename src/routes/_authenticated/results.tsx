@@ -6,6 +6,7 @@ import { AppShell } from "@/components/mb/app-shell";
 import { PredictionSections } from "@/components/mb/prediction-sections";
 import { Panel, SectionTitle, StatusPill } from "@/components/mb/primitives";
 import { RadarChart } from "@/components/mb/radar-chart";
+import { AdaptiveProfile } from "@/components/mb/adaptive-profile";
 import { ScoreGauge } from "@/components/mb/score-gauge";
 import { radarValues, scoreStatus } from "@/lib/mb";
 import { loadPrediction, type SavedPrediction } from "@/lib/prediction";
@@ -57,7 +58,7 @@ function ResultsPage() {
               </div>
 
               {saved.assessment ? (
-                <DynamicProfile score={saved.result.score} assessment={saved.assessment} />
+                <AdaptiveProfile assessment={saved.assessment} data={radarValues(saved.assessment)} />
               ) : null}
             </div>
 
