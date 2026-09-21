@@ -6,6 +6,8 @@ import { AppShell } from "@/components/mb/app-shell";
 import { Panel, SectionTitle, StatusPill } from "@/components/mb/primitives";
 import { loadPrediction, type SavedPrediction } from "@/lib/prediction";
 import { radarValues, scoreStatus } from "@/lib/mb";
+import { supabase } from "@/integrations/supabase/client";
+import { getInsightOpener, getUserSeed, getWellnessQuote } from "@/lib/personalization";
 
 export const Route = createFileRoute("/_authenticated/insights")({
   head: () => ({
@@ -24,9 +26,15 @@ export const Route = createFileRoute("/_authenticated/insights")({
 function InsightsPage() {
   const [saved, setSaved] = useState<SavedPrediction | null>(null);
   const [checked, setChecked] = useState(false);
+  const [userSeed, setUserSeed] = useState("vrittacare");
 
   useEffect(() => {
-    setSaved(loadPrediction());
+    const current = loadPrediction();
+    setSaved(current);
+    supabase.auth.getUser().then(({ data }) => {
+      const seed = getUserSeed(data.user?.id ?? data.user?.email, current?.assessment);
+      setUserSeed(seed);
+    });
     setChecked(true);
   }, []);
 
@@ -115,7 +123,7 @@ function InsightsPage() {
 
           <div className="relative max-w-3xl">
             <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-mb-cyan">Your personal action space</p>
-            <h1 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">Insights that become small steps.</h1>
+            <h1 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">{getInsightOpener(userSeed, saved?.result.score ? Math.round(saved.result.score * 10) : 2)}</h1>
 
             {!checked ? null : saved && status ? (
               <>
@@ -167,7 +175,7 @@ function InsightsPage() {
                     </div>
                   </div>
                 </div>
-                <p className="mt-5 font-serif italic tracking-wide text-xl leading-relaxed text-foreground/90">“You do not have to become a different person to deserve a better day.”</p>
+                <p className="mt-5 font-serif italic tracking-wide text-xl leading-relaxed text-foreground/90">“{getWellnessQuote(userSeed, 11)}”</p>
               </Panel>
 
               <Panel hover>
