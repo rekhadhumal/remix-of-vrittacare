@@ -10,8 +10,7 @@ function variantFor(assessment: Record<string, unknown>) {
   return hash % 4;
 }
 
-export function AdaptiveProfile({ assessment }: { assessment: Record<string, unknown> }) {
-  const data = assessment.__profile as Point[] | undefined;
+export function AdaptiveProfile({ assessment, data }: { assessment: Record<string, unknown>; data: Point[] }) {
   if (!data?.length) return null;
   const variant = variantFor(assessment);
 
