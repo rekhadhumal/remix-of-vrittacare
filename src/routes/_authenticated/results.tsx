@@ -10,6 +10,8 @@ import { AdaptiveProfile } from "@/components/mb/adaptive-profile";
 import { ScoreGauge } from "@/components/mb/score-gauge";
 import { radarValues, scoreStatus } from "@/lib/mb";
 import { loadPrediction, type SavedPrediction } from "@/lib/prediction";
+import { supabase } from "@/integrations/supabase/client";
+import { getResultLine, getUserSeed } from "@/lib/personalization";
 
 export const Route = createFileRoute("/_authenticated/results")({
   head: () => ({
@@ -28,16 +30,21 @@ export const Route = createFileRoute("/_authenticated/results")({
 function ResultsPage() {
   const [saved, setSaved] = useState<SavedPrediction | null>(null);
   const [checked, setChecked] = useState(false);
+  const [userSeed, setUserSeed] = useState("vrittacare");
 
   useEffect(() => {
-    setSaved(loadPrediction());
+    const current = loadPrediction();
+    setSaved(current);
+    supabase.auth.getUser().then(({ data }) => {
+      setUserSeed(getUserSeed(data.user?.id ?? data.user?.email, current?.assessment));
+    });
     setChecked(true);
   }, []);
 
   return (
     <AppShell>
       <Panel>
-        <SectionTitle sub="Scored by your local prediction model from your latest assessment.">
+        <SectionTitle sub={saved ? getResultLine(userSeed, Math.round(saved.result.score * 10)) : "Scored by your connected prediction model from your latest assessment."}>
           My Results
         </SectionTitle>
 
