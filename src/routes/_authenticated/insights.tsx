@@ -167,7 +167,7 @@ function InsightsPage() {
                     </div>
                   </div>
                 </div>
-                <p className="mt-5 font-hand text-xl leading-relaxed text-foreground/90">“You do not have to become a different person to deserve a better day.”</p>
+                <p className="mt-5 font-serif italic tracking-wide text-xl leading-relaxed text-foreground/90">“You do not have to become a different person to deserve a better day.”</p>
               </Panel>
 
               <Panel hover>
