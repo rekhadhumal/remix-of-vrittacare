@@ -1,12 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/mb/app-shell";
 import { Panel, SectionTitle } from "@/components/mb/primitives";
-import { submitAssessment } from "@/lib/dashboard.functions";
+import { predictMentalHealth, PredictionError, savePrediction } from "@/lib/prediction";
 import {
   ACADEMIC_LEVELS,
   COUNTRIES,
@@ -49,22 +48,18 @@ const DEFAULTS: AssessmentInput = {
 
 function AssessmentPage() {
   const [form, setForm] = useState<AssessmentInput>(DEFAULTS);
-  const submit = useServerFn(submitAssessment);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: () => submit({ data: form }),
-    onSuccess: async (res) => {
-      await queryClient.invalidateQueries();
-      if (res.ok) {
-        toast.success("Your assessment was scored by the model.");
-      } else {
-        toast.warning(res.message);
-      }
+    mutationFn: () => predictMentalHealth(form),
+    onSuccess: (result) => {
+      savePrediction(result);
+      toast.success("Your assessment was scored by the model.");
       navigate({ to: "/results" });
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: (error: Error) => {
+      toast.error(error instanceof PredictionError ? error.message : `Prediction failed: ${error.message}`);
+    },
   });
 
   function set<K extends keyof AssessmentInput>(key: K, value: AssessmentInput[K]) {
@@ -147,6 +142,11 @@ function AssessmentPage() {
           />
 
           <div className="sm:col-span-2">
+            {mutation.isError && (
+              <p className="mb-3 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                {mutation.error instanceof Error ? mutation.error.message : "The prediction request failed. Please try again."}
+              </p>
+            )}
             <button
               type="submit"
               disabled={mutation.isPending}
