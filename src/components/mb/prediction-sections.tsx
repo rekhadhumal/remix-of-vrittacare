@@ -7,26 +7,26 @@ const GROUPS = [
   {
     key: "needs_attention",
     label: "Needs Attention",
-    empty: "No items were flagged as needing attention.",
+    empty: "Nothing flagged.",
     icon: AlertTriangle,
-    className: "border-mb-pink/30 bg-mb-pink/8",
-    iconClassName: "text-mb-pink",
+    className: "border-mb-violet/25 bg-mb-violet/[0.06]",
+    iconClassName: "text-mb-violet",
   },
   {
     key: "watch",
     label: "Watch",
-    empty: "No items were placed on watch.",
+    empty: "Nothing to watch.",
     icon: Eye,
-    className: "border-mb-amber/30 bg-mb-amber/8",
-    iconClassName: "text-mb-amber",
+    className: "border-primary/20 bg-primary/[0.05]",
+    iconClassName: "text-primary",
   },
   {
     key: "stable",
     label: "Stable",
-    empty: "No items were marked stable.",
+    empty: "No stable items reported.",
     icon: ShieldCheck,
-    className: "border-mb-green/30 bg-mb-green/8",
-    iconClassName: "text-mb-green",
+    className: "border-mb-cyan/20 bg-mb-cyan/[0.05]",
+    iconClassName: "text-mb-cyan",
   },
 ] as const;
 
@@ -53,6 +53,7 @@ export function PredictionSections({
             key={group.key}
             className={cn(
               "rounded-xl border p-4",
+              items.length === 0 && "py-3",
               group.className,
             )}
           >
@@ -102,7 +103,7 @@ export function PredictionSections({
                 ))}
               </ul>
             ) : (
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
                 {group.empty}
               </p>
             )}

@@ -1,13 +1,12 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Brain, ClipboardList, Home, Info, LineChart, LogOut, MessageCircle, Sparkles } from "lucide-react";
+import { ClipboardList, Home, Info, LineChart, LogOut, MessageCircle, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
 
+import { BrandMark } from "@/components/mb/brand-mark";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import { getWellnessQuote } from "@/lib/personalization";
 
 const NAV = [
   { to: "/dashboard", label: "Home", icon: Home },
@@ -22,15 +21,6 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [sidebarQuote, setSidebarQuote] = useState("A better day can begin with one small decision you make for yourself.");
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      const seed = data.user?.id ?? data.user?.email ?? "vrittacare";
-      setSidebarQuote(getWellnessQuote(seed, 7));
-    });
-  }, []);
-
   async function signOut() {
     await queryClient.cancelQueries();
     queryClient.clear();
@@ -52,11 +42,9 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
           <div>
             <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3 shadow-[0_20px_60px_-40px_rgba(34,211,238,.5)] backdrop-blur-xl">
               <div className="flex items-center gap-2.5 px-1">
-                <span className="grid h-10 w-10 place-items-center rounded-xl border border-mb-cyan/25 bg-mb-cyan/10 text-mb-cyan shadow-[0_0_28px_-10px_var(--mb-cyan)]">
-                  <Brain className="h-5 w-5" />
-                </span>
+                <BrandMark className="h-9 w-11" />
                 <div>
-                  <p className="bg-gradient-to-r from-mb-cyan to-primary bg-clip-text text-[15px] font-extrabold leading-tight text-transparent">VRITTACARE</p>
+                  <p className="bg-gradient-to-r from-mb-cyan to-primary bg-clip-text text-[15px] font-extrabold leading-tight tracking-[0.08em] text-transparent">VRITTACARE</p>
                   <p className="max-w-[145px] text-[9px] leading-tight text-muted-foreground">Mental Health Prediction System</p>
                 </div>
               </div>
@@ -86,23 +74,9 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
           </div>
 
           <div className="space-y-3">
-            <div className="group relative overflow-hidden rounded-2xl border border-mb-cyan/15 bg-gradient-to-br from-mb-cyan/[0.08] via-white/[0.035] to-mb-violet/[0.08] p-3.5 backdrop-blur-xl shadow-[0_24px_70px_-50px_rgba(34,211,238,.8)]">
-              <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-mb-cyan/15 blur-2xl transition duration-700 group-hover:bg-mb-cyan/25" />
-              <div className="relative rounded-xl border border-white/10 bg-black/15 p-4">
-                <div className="mb-3 flex items-center gap-2">
-                  <span className="grid h-8 w-8 place-items-center rounded-full border border-mb-cyan/20 bg-mb-cyan/10 text-mb-cyan">✦</span>
-                  <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-mb-cyan">A thought to carry</span>
-                </div>
-                <p className="font-serif text-sm font-semibold italic leading-relaxed text-white/90">
-                  “{sidebarQuote}”
-                </p>
-              </div>
-              <div className="relative mt-3 text-center">
-                <p className="text-[9px] uppercase tracking-[0.16em] text-muted-foreground">Created with care by</p>
-                <p className="mt-1 text-[11px] font-extrabold uppercase tracking-[0.06em] text-foreground/95">VAIBHAV SOLANKE</p>
-                <p className="text-[9px] text-mb-cyan">&</p>
-                <p className="text-[11px] font-extrabold uppercase tracking-[0.06em] text-foreground/95">RUTUJA DHUMAL</p>
-              </div>
+            <div className="px-3 py-2">
+              <p className="text-[10px] text-muted-foreground">Dreamed into reality by</p>
+              <p className="mt-1 text-[10px] font-bold leading-relaxed text-foreground/90">RUTUJA DHUMAL &amp; VAIBHAV SOLANKE</p>
             </div>
 
             <Button onClick={signOut} variant="ghost" className="w-full justify-start gap-2 px-3 text-sm text-muted-foreground hover:bg-white/[0.045] hover:text-foreground">
