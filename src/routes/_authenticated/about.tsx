@@ -102,7 +102,7 @@ function AboutPage() {
                 </div>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Rutuja led the core data-science workflow from understanding and cleaning the student dataset through EDA, feature engineering, model building and tuning. She also carried the prediction workflow into a FastAPI service and helped shape the student-facing VRITTACARE experience so that model output becomes understandable guidance rather than a raw number.
+                Rutuja led the data-science workflow: cleaning the student dataset, conducting exploratory data analysis, engineering useful features, and building and tuning the prediction model. She developed the FastAPI prediction service and shaped its raw outputs into clear, responsible in-app guidance for students.
               </p>
               <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-mb-cyan">
                 <span className="rounded-full border border-mb-cyan/15 bg-mb-cyan/5 px-3 py-1">Data Science</span>
@@ -124,7 +124,7 @@ function AboutPage() {
                 </div>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Vaibhav played an important collaborative role in establishing the project's technical foundation and early direction. His work included understanding the initial dataset and project requirements, setting up the development dependencies and working environment, and contributing to early technical discussions around how the data-science work could become a usable student-facing application. He also remained part of the product-development collaboration, helping shape the project direction and giving the later modeling, API and frontend work a clearer foundation to build on.
+                Vaibhav established the project’s technical setup and working environment, organized the required dependencies, and contributed to understanding the dataset and project requirements. Through ongoing technical discussions and direction input, he helped connect the data-science work to a coherent student-facing product and supported practical decisions throughout development.
               </p>
               <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-mb-violet">
                 <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Technical Foundation</span>
@@ -145,7 +145,7 @@ function AboutPage() {
             </p>
           </div>
 
-          <p className="mt-6 text-center font-serif italic tracking-wide text-xl text-foreground/80">
+          <p className="mt-6 border-t border-mb-line pt-5 text-center text-lg font-medium text-foreground/80">
             “Good technology should not make people feel smaller. It should help them understand themselves a little better.”
           </p>
         </Panel>

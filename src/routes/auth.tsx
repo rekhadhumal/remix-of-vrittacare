@@ -1,10 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   ArrowRight,
-  Brain,
   Eye,
   EyeOff,
-  Leaf,
   LockKeyhole,
   Mail,
   UserRound,
@@ -13,6 +11,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import authLandscape from "@/assets/vrittacare-auth-landscape.jpg";
+import { BrandMark } from "@/components/mb/brand-mark";
 import { Button } from "@/components/ui/button";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
@@ -104,7 +103,7 @@ function AuthPage() {
       <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[1480px] items-center gap-8 px-5 py-8 sm:px-9 lg:grid-cols-[minmax(0,1.08fr)_minmax(430px,0.92fr)] lg:gap-14 lg:px-14 xl:px-20">
         <section className="auth-brand-lockup self-start pt-1 text-center sm:pt-5 lg:self-stretch lg:pt-[7vh]" aria-label="VRITTACARE">
           <BrandMark />
-          <p className="mt-4 text-[27px] font-extrabold leading-none tracking-[0.18em] text-foreground drop-shadow-[0_0_18px_var(--auth-cyan-glow)] sm:text-[34px]">
+          <p className="mt-4 text-[27px] font-extrabold leading-none tracking-[0.12em] text-foreground drop-shadow-[0_0_18px_var(--auth-cyan-glow)] sm:text-[34px]">
             VRITTA<span className="text-mb-cyan">CARE</span>
           </p>
           <p className="mt-2 text-[13px] font-semibold text-foreground/95 drop-shadow-md sm:text-[16px]">
@@ -180,16 +179,6 @@ function AuthPage() {
         </section>
       </div>
     </main>
-  );
-}
-
-function BrandMark() {
-  return (
-    <span className="brand-mark relative mx-auto block h-16 w-[92px] text-mb-cyan sm:h-[74px] sm:w-[106px]" aria-hidden="true">
-      <Brain className="absolute left-1 top-0 h-16 w-16 stroke-[1.7] drop-shadow-[0_0_7px_var(--auth-cyan-glow)] sm:h-[72px] sm:w-[72px]" />
-      <Leaf className="absolute bottom-0 right-0 h-11 w-11 rotate-[-16deg] stroke-[1.8] text-mb-green drop-shadow-[0_0_7px_var(--auth-teal-glow)] sm:h-12 sm:w-12" />
-      <span className="absolute bottom-1 left-[52px] h-8 w-px -rotate-[28deg] bg-mb-cyan shadow-auth-mark sm:left-[59px]" />
-    </span>
   );
 }
 

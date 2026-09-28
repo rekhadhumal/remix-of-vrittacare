@@ -175,7 +175,7 @@ function InsightsPage() {
                     </div>
                   </div>
                 </div>
-                <p className="mt-5 font-serif italic tracking-wide text-xl leading-relaxed text-foreground/90">“{getWellnessQuote(userSeed, 11)}”</p>
+                <p className="mt-5 border-l-2 border-mb-cyan/40 pl-4 text-lg font-medium leading-relaxed text-foreground/90">“{getWellnessQuote(userSeed, 11)}”</p>
               </Panel>
 
               <Panel hover>
