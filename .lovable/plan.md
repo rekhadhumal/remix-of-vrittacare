@@ -1,9 +1,9 @@
 # Refine the VRITTACARE brand lockup
 
 ## What will change
-- Refine the shared brain-and-leaf symbol into a crisp, symmetrical cyan/blue vector with balanced integrated leaves and consistent strokes.
-- Add reusable full and compact lockups so every placement uses the same brand geometry and typography.
-- Use the full centered lockup with `VRITTACARE` and `Student's Mental Wellness Companion` on the sign-in and About introduction areas.
+- Refine the shared brain-and-leaf symbol to closely reproduce the reference composition and proportions as a crisp, symmetrical cyan-to-blue vector with integrated leaves and consistent strokes.
+- Add reusable full and compact lockups so every placement uses the same geometry, uppercase weight, capitalization, spacing, proportions, and restrained glow shown by the reference.
+- Use the full centered lockup with `VRITTACARE` and `Student's Mental Wellness Companion`, preserving the reference hierarchy and light subtitle treatment, on the sign-in and About introduction areas.
 - Use the compact symbol plus `VRITTACARE` in the desktop sidebar and mobile navigation without changing navigation behavior.
 - Create a small, padded favicon from the same symbol and replace the existing browser icon.
 
