@@ -9,4 +9,4 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Reuse `BrandMark` and `WellnessMetrics` for the shared VRITTACARE identity and five assessment stat cards, keeping visual semantics consistent.
+- Reuse `BrandMark`/`BrandLockup` for every VRITTACARE identity placement and `WellnessMetrics` for the five assessment stat cards, preserving visual consistency.

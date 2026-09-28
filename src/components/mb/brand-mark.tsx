@@ -1,18 +1,21 @@
+import { useId } from "react";
+
 import { cn } from "@/lib/utils";
 
 export function BrandMark({ className, large = false }: { className?: string; large?: boolean }) {
   const size = large ? "h-[82px] w-[102px]" : "h-11 w-14";
+  const gradientId = useId().replaceAll(":", "");
 
   return (
     <span className={cn("brand-symbol relative inline-block shrink-0", size, className)} aria-hidden="true">
       <svg viewBox="0 0 104 76" className="h-full w-full overflow-visible" fill="none">
         <defs>
-          <linearGradient id="vritta-mark-gradient" x1="18" y1="12" x2="87" y2="65" gradientUnits="userSpaceOnUse">
+          <linearGradient id={gradientId} x1="18" y1="12" x2="87" y2="65" gradientUnits="userSpaceOnUse">
             <stop stopColor="var(--mb-cyan)" />
             <stop offset="1" stopColor="var(--primary)" />
           </linearGradient>
         </defs>
-        <g stroke="url(#vritta-mark-gradient)" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round">
+        <g stroke={`url(#${gradientId})`} strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round">
           <path d="M50 13C46 8 39 8 35 12C28 9 21 14 22 21C16 22 13 29 16 34C11 39 13 47 19 49C18 57 25 62 32 59C37 65 46 62 50 57V13Z" />
           <path d="M54 13C58 8 65 8 69 12C76 9 83 14 82 21C88 22 91 29 88 34C92 37 92 42 90 46" />
           <path d="M50 17C44 15 40 18 40 23M50 30C44 27 39 30 39 35M50 44C44 40 38 43 38 49" />
