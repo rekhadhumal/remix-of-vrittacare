@@ -161,7 +161,7 @@ function Hero({
 
       <div className="relative flex min-h-[290px] max-w-[650px] flex-col justify-center px-6 py-10 md:px-9">
         <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.22em] text-mb-cyan">Your daily wellness space</p>
-        <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">
+        <h1 className="text-2xl font-extrabold tracking-tight md:text-3xl">
           {name ? `Welcome back, ${name}.` : "Welcome back."}
         </h1>
         <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/75 md:text-base">
@@ -169,7 +169,7 @@ function Hero({
           {heroLine}
         </p>
         <div className="mt-5 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.055] px-4 py-3 backdrop-blur-md shadow-[0_16px_40px_-28px_rgba(34,211,238,.6)]">
-          <p className="text-lg font-semibold italic leading-relaxed text-white/95 md:text-xl">“{quote}”</p>
+          <p className="text-base font-semibold not-italic leading-relaxed text-white/95 md:text-lg">“{quote}”</p>
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">
