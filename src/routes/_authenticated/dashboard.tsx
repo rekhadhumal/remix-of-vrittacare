@@ -78,9 +78,9 @@ function DashboardPage() {
       const user = authData.user;
       const metadata = (user?.user_metadata ?? {}) as Record<string, unknown>;
       const metadataName =
-        typeof metadata.display_name === "string" ? metadata.display_name.trim() :
-        typeof metadata.full_name === "string" ? metadata.full_name.trim() :
-        typeof metadata.name === "string" ? metadata.name.trim() : null;
+        typeof metadata["display_name"] === "string" ? metadata["display_name"].trim() :
+        typeof metadata["full_name"] === "string" ? metadata["full_name"].trim() :
+        typeof metadata["name"] === "string" ? metadata["name"].trim() : null;
       const fallbackName =
         metadataName ||
         user?.email?.split("@")[0]?.replace(/[._-]+/g, " ").replace(/\b\w/g, (m) => m.toUpperCase()) ||

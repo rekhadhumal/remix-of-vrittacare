@@ -111,7 +111,7 @@ function InsightsPage() {
   const strongest = useMemo(() => {
     if (!assessment) return null;
     const values = radarValues(assessment);
-    return values.reduce((best, item) => (item.value > best.value ? item : best), values[0]);
+    return values.reduce((best, item) => (item.value > best.value ? item : best), values[0] ?? { label: "Your routine", value: 0 });
   }, [assessment]);
 
   return (

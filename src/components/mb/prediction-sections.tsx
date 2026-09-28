@@ -75,6 +75,10 @@ export function PredictionSections({
             {items.length > 0 ? (
               <ul className="mt-3 space-y-3">
                 {items.map((item, index) => (
+                  (() => {
+                    const [title, ...detailParts] = item.split(" — ");
+                    const detail = detailParts.join(" — ");
+                    return (
                   <li
                     key={`${group.key}-${index}-${item}`}
                     className="flex gap-2 text-sm leading-relaxed text-foreground/85"
@@ -89,17 +93,14 @@ export function PredictionSections({
 
                     <div className="min-w-0">
                       <p className="font-semibold text-foreground">
-                        {item.split(" — ")[0]}
+                        {title}
                       </p>
 
-                      <p className="mt-1 text-sm text-foreground/80">
-                        {item
-                          .split(" — ")
-                          .slice(1)
-                          .join(" — ")}
-                      </p>
+                      {detail ? <p className="mt-1 text-sm text-foreground/80">{detail}</p> : null}
                     </div>
                   </li>
+                    );
+                  })()
                 ))}
               </ul>
             ) : (

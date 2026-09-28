@@ -78,8 +78,10 @@ function hashSeed(seed: string): number {
 }
 
 export function pickForUser<T>(seed: string, values: readonly T[], salt = 0): T {
+  const first = values[0];
+  if (first === undefined) throw new Error("Cannot pick from an empty collection.");
   const index = (hashSeed(seed + ":" + salt) % values.length + values.length) % values.length;
-  return values[index];
+  return values[index] ?? first;
 }
 
 export function getWellnessQuote(seed: string, salt = 0): string {

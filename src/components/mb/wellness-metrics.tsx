@@ -1,8 +1,7 @@
 import { Activity, BookOpen, MonitorSmartphone, Moon, Wind } from "lucide-react";
 
 import { StatusPill } from "@/components/mb/primitives";
-import { lifestyleCards } from "@/lib/mb";
-import type { AssessmentInput } from "@/lib/prediction";
+import { lifestyleCards, type AssessmentInput } from "@/lib/mb";
 
 const ICONS = {
   sleep: Moon,

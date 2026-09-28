@@ -1,5 +1,4 @@
 import { RadarChart } from "@/components/mb/radar-chart";
-import { cn } from "@/lib/utils";
 
 type Point = { label: string; value: number };
 
