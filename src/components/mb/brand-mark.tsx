@@ -10,20 +10,20 @@ export function BrandMark({ className, large = false }: { className?: string; la
     <span className={cn("brand-symbol relative inline-block shrink-0", size, className)} aria-hidden="true">
       <svg viewBox="0 0 104 76" className="h-full w-full overflow-visible" fill="none">
         <defs>
-          <linearGradient id={gradientId} x1="18" y1="12" x2="87" y2="65" gradientUnits="userSpaceOnUse">
+          <linearGradient id={gradientId} x1="15" y1="11" x2="91" y2="65" gradientUnits="userSpaceOnUse">
             <stop stopColor="var(--mb-cyan)" />
             <stop offset="1" stopColor="var(--primary)" />
           </linearGradient>
         </defs>
         <g stroke={`url(#${gradientId})`} strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M50 13C46 8 39 8 35 12C28 9 21 14 22 21C16 22 13 29 16 34C11 39 13 47 19 49C18 57 25 62 32 59C37 65 46 62 50 57V13Z" />
-          <path d="M54 13C58 8 65 8 69 12C76 9 83 14 82 21C88 22 91 29 88 34C92 37 92 42 90 46" />
-          <path d="M50 17C44 15 40 18 40 23M50 30C44 27 39 30 39 35M50 44C44 40 38 43 38 49" />
-          <path d="M54 17C60 15 64 18 64 23M54 30C60 27 65 30 65 35M72 19C68 21 67 25 69 29M32 20C36 22 37 26 35 30M24 35C30 34 34 37 34 42M80 34C74 33 70 36 70 41M24 49C29 46 35 48 37 53" />
-          <path d="M52 13V58" />
-          <path d="M56 58C63 47 72 43 87 45C84 56 74 63 58 62Z" />
-          <path d="M58 61C66 55 75 50 85 46" />
-          <path d="M58 57C59 48 55 43 49 39C47 48 50 54 58 57Z" />
+          <path d="M40 13C36 8 30 8 26 12C20 9 14 14 15 21C10 22 7 29 10 34C6 39 8 47 14 49C13 57 19 62 26 59C30 65 37 62 40 57V13Z" />
+          <path d="M42 13C46 8 52 8 56 12C62 9 68 14 67 21C72 22 75 29 72 34C76 39 74 47 68 49C69 57 63 62 56 59C52 65 45 62 42 57V13Z" />
+          <path d="M40 17C35 15 31 18 31 23M40 30C35 27 30 30 30 35M40 44C35 40 30 43 30 49" />
+          <path d="M42 17C47 15 51 18 51 23M42 30C47 27 52 30 52 35M42 44C47 40 52 43 52 49M58 19C55 21 54 25 56 29M24 20C27 22 28 26 26 30M17 35C22 34 26 37 26 42M65 35C60 34 56 37 56 42M18 49C22 46 27 48 29 53M64 49C60 46 55 48 53 53" />
+          <path d="M41 13V58" />
+          <path d="M49 59C58 46 70 42 91 44C87 58 74 66 51 63Z" />
+          <path d="M51 63C62 55 75 49 89 45" />
+          <path d="M52 57C53 47 48 40 41 37C39 47 43 54 52 57Z" />
         </g>
       </svg>
     </span>
