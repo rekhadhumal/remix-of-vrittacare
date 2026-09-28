@@ -53,11 +53,11 @@ const HERO_LINES = [
 ] as const;
 
 const INSIGHT_OPENERS = [
-  "Your result is a starting point, not the whole story.",
-  "This space turns your latest check-in into a few realistic choices.",
-  "There is no checklist to finish here — just a few options shaped around your routine.",
-  "Use these ideas as a menu, not a set of rules.",
-  "Your answers give us a direction; you decide which step belongs in your day."
+  "Choose one small action from what your check-in is showing you.",
+  "Start with the habit that feels most realistic to change this week.",
+  "Turn one observation into one practical step you can try today.",
+  "Your next step does not need to be big — it needs to be doable.",
+  "Use your result as a guide, then choose one change that fits your routine."
 ] as const;
 
 const RESULT_LINES = [
