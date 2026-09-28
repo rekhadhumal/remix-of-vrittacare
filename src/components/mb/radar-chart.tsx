@@ -105,7 +105,7 @@ export function Radar3D({ data }: { data: Point[] }) {
       [0, 1, 2, 3].map((i) => ({
         depth: i * 26,
         scale: 1 - i * 0.06,
-        color: ["var(--mb-cyan)", "var(--primary)", "var(--mb-violet)", "var(--mb-pink)"][i]!,
+        color: ["var(--mb-cyan)", "var(--primary)", "var(--mb-violet)", "var(--primary)"][i] ?? "var(--mb-cyan)",
         opacity: 0.55 - i * 0.1,
       })),
     [],
@@ -158,7 +158,7 @@ export function Radar3D({ data }: { data: Point[] }) {
             <div key={item.label} className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
               <span
                 className="h-1.5 w-1.5 shrink-0 rounded-full"
-                style={{ background: ["var(--mb-cyan)", "var(--primary)", "var(--mb-violet)", "var(--mb-pink)", "var(--mb-green)"][index % 5] }}
+                style={{ background: ["var(--mb-cyan)", "var(--primary)", "var(--mb-violet)", "var(--primary)", "var(--mb-cyan)"][index % 5] }}
               />
               <span className="truncate">{item.label}</span>
               <span className="ml-auto font-semibold text-foreground/80">{Math.round(item.value * 100)}%</span>

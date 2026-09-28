@@ -102,7 +102,7 @@ function AuthPage() {
 
       <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[1480px] items-center gap-8 px-5 py-8 sm:px-9 lg:grid-cols-[minmax(0,1.08fr)_minmax(430px,0.92fr)] lg:gap-14 lg:px-14 xl:px-20">
         <section className="auth-brand-lockup self-start pt-1 text-center sm:pt-5 lg:self-stretch lg:pt-[7vh]" aria-label="VRITTACARE">
-          <BrandMark />
+          <BrandMark large className="brand-mark mx-auto" />
           <p className="mt-4 text-[27px] font-extrabold leading-none tracking-[0.12em] text-foreground drop-shadow-[0_0_18px_var(--auth-cyan-glow)] sm:text-[34px]">
             VRITTA<span className="text-mb-cyan">CARE</span>
           </p>
