@@ -169,7 +169,7 @@ function Hero({
           {heroLine}
         </p>
         <div className="mt-5 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.055] px-4 py-3 backdrop-blur-md shadow-[0_16px_40px_-28px_rgba(34,211,238,.6)]">
-          <p className="text-lg font-serif font-semibold italic leading-relaxed tracking-[0.01em] text-white/95 md:text-xl">“{quote}”</p>
+          <p className="text-lg font-semibold italic leading-relaxed text-white/95 md:text-xl">“{quote}”</p>
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">
