@@ -71,9 +71,12 @@ function AssessmentPage() {
   return (
     <AppShell>
       <Panel>
-        <SectionTitle sub="All twelve answers are sent to the trained model exactly as you enter them.">
+        <SectionTitle sub="Every check-in is a small step toward understanding yourself better.">
           Take Assessment
         </SectionTitle>
+        <p className="mb-5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          All twelve answers are sent to the trained model exactly as you enter them.
+        </p>
 
         <form
           className="grid gap-4 sm:grid-cols-2"
