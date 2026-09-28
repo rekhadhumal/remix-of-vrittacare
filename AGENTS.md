@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Reuse `BrandMark` and `WellnessMetrics` for the shared VRITTACARE identity and five assessment stat cards, keeping visual semantics consistent.

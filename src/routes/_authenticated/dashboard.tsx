@@ -5,25 +5,20 @@ import { ArrowRight, Heart, Moon, Sparkles, Target, Wind } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import heroInclusive from "@/assets/mindbalance-hero-inclusive.jpg";
-import iconActivity from "@/assets/icon-activity.png";
-import iconScreen from "@/assets/icon-screen.png";
-import iconSleep from "@/assets/icon-sleep.png";
-import iconStress from "@/assets/icon-stress.png";
-import iconStudy from "@/assets/icon-study.png";
-import quoteArt from "@/assets/quote-art.jpg";
 import { AppShell } from "@/components/mb/app-shell";
 import { AssistantPanel } from "@/components/mb/assistant-panel";
 import { Panel, SectionTitle, StatusPill } from "@/components/mb/primitives";
 import { Radar3D } from "@/components/mb/radar-chart";
 import { AdaptiveProfile } from "@/components/mb/adaptive-profile";
 import { ScoreGauge } from "@/components/mb/score-gauge";
+import { WellnessMetrics } from "@/components/mb/wellness-metrics";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { getDashboardData } from "@/lib/dashboard.functions";
-import { lifestyleCards, radarValues, scoreStatus, type DashboardData } from "@/lib/mb";
+import { radarValues, scoreStatus, type DashboardData } from "@/lib/mb";
 import { loadPrediction, type SavedPrediction } from "@/lib/prediction";
 import { supabase } from "@/integrations/supabase/client";
-import { getHeroLine, getHeroQuote, getUserSeed, getWellnessQuote } from "@/lib/personalization";
+import { getHeroLine, getHeroQuote, getUserSeed } from "@/lib/personalization";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -38,14 +33,6 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   }),
   component: DashboardPage,
 });
-
-const LIFESTYLE_ART = {
-  sleep: iconSleep,
-  study: iconStudy,
-  screen: iconScreen,
-  activity: iconActivity,
-  stress: iconStress,
-} as const;
 
 const FOCUS_COPY: Record<string, { title: string; text: string; icon: typeof Target }> = {
   Sleep: {
@@ -91,9 +78,9 @@ function DashboardPage() {
       const user = authData.user;
       const metadata = (user?.user_metadata ?? {}) as Record<string, unknown>;
       const metadataName =
-        typeof metadata.display_name === "string" ? metadata.display_name.trim() :
-        typeof metadata.full_name === "string" ? metadata.full_name.trim() :
-        typeof metadata.name === "string" ? metadata.name.trim() : null;
+        typeof metadata["display_name"] === "string" ? metadata["display_name"].trim() :
+        typeof metadata["full_name"] === "string" ? metadata["full_name"].trim() :
+        typeof metadata["name"] === "string" ? metadata["name"].trim() : null;
       const fallbackName =
         metadataName ||
         user?.email?.split("@")[0]?.replace(/[._-]+/g, " ").replace(/\b\w/g, (m) => m.toUpperCase()) ||
@@ -182,7 +169,7 @@ function Hero({
           {heroLine}
         </p>
         <div className="mt-5 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.055] px-4 py-3 backdrop-blur-md shadow-[0_16px_40px_-28px_rgba(34,211,238,.6)]">
-          <p className="text-lg font-serif font-semibold italic leading-relaxed tracking-[0.01em] text-white/95 md:text-xl">“{quote}”</p>
+          <p className="text-lg font-semibold italic leading-relaxed text-white/95 md:text-xl">“{quote}”</p>
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">
@@ -209,16 +196,14 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
   const category = saved?.result.category ?? data?.result?.status_label ?? null;
   const status = score === null ? null : scoreStatus(score);
   const radar = radarValues(assessment);
-  const cards = lifestyleCards(assessment);
-
   const focus = useMemo(
-    () => radar.reduce((lowest, current) => (current.value < lowest.value ? current : lowest), radar[0]),
+    () => radar.reduce((lowest, current) => (current.value < lowest.value ? current : lowest), radar[0] ?? { label: "Stress", value: 0 }),
     [radar],
   );
 
-  const focusInfo = FOCUS_COPY[focus.label] ?? FOCUS_COPY.Stress;
+  const focusInfo = FOCUS_COPY[focus.label] ?? FOCUS_COPY["Stress"];
+  if (!focusInfo) return null;
   const FocusIcon = focusInfo.icon;
-  const balance = Math.round((radar.reduce((sum, item) => sum + item.value, 0) / radar.length) * 100);
 
   return (
     <>
@@ -249,17 +234,6 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
             </div>
           </div>
 
-          <div className="relative mt-5 rounded-2xl border border-white/10 bg-black/15 p-4 backdrop-blur-md">
-            <div className="flex items-start gap-3">
-              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-mb-cyan" />
-              <div>
-                <p className="text-sm font-bold">Your balance right now: {balance}%</p>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  This is a visual balance indicator from your five lifestyle inputs, not a second prediction score.
-                </p>
-              </div>
-            </div>
-          </div>
         </Panel>
 
         <Panel hover className="relative overflow-hidden">
@@ -286,75 +260,26 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
 
       <Panel hover className="overflow-hidden">
         <SectionTitle sub="Your everyday rhythm — not a judgment, just a snapshot.">Your Wellness Rhythm</SectionTitle>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
-          {cards.map((card) => {
-            const art = LIFESTYLE_ART[card.key];
-            return (
-              <div key={card.key} className="group relative min-h-[155px] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-3.5 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-mb-cyan/30 hover:bg-white/[0.07] hover:shadow-mb-glow">
-                <div className="absolute -right-5 -top-5 h-20 w-20 rounded-full bg-mb-cyan/8 blur-2xl transition group-hover:bg-mb-cyan/15" />
-                <div className="relative flex items-start justify-between gap-2">
-                  <img src={art} alt="" width={72} height={72} loading="lazy" className="h-14 w-14 object-contain drop-shadow-lg transition duration-500 group-hover:scale-110 group-hover:-rotate-3" />
-                  <StatusPill tone={card.tone}>{card.tag}</StatusPill>
-                </div>
-                <p className="relative mt-2 text-xl font-extrabold">
-                  {card.value}{card.unit ? <span className="ml-1 text-xs font-medium text-muted-foreground">{card.unit}</span> : null}
-                </p>
-                <p className="relative text-xs text-muted-foreground">{card.label}</p>
-              </div>
-            );
-          })}
-        </div>
+        <WellnessMetrics assessment={assessment} />
       </Panel>
 
-      <div className="grid gap-4 lg:grid-cols-[1.08fr_0.92fr]">
-        <Panel hover>
-          <SectionTitle sub="This map changes with your own answers. Lower bars simply show where more care may help.">Your Personal Focus Map</SectionTitle>
-          <div className="space-y-4">
-            {radar.map((item, index) => (
-              <div key={item.label}>
-                <div className="mb-1.5 flex items-center justify-between gap-3 text-sm">
-                  <span className="font-semibold">{item.label}</span>
-                  <span className="text-xs text-muted-foreground">{Math.round(item.value * 100)}%</span>
-                </div>
-                <div className="h-3 overflow-hidden rounded-full border border-white/10 bg-black/20">
-                  <div className="h-full rounded-full bg-gradient-to-r from-mb-cyan via-primary to-mb-violet shadow-[0_0_18px_rgba(34,211,238,.3)] transition-all duration-1000" style={{ width: Math.round(item.value * 100) + "%", transitionDelay: index * 90 + "ms" }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </Panel>
-
-        <Panel hover className="relative overflow-hidden">
-          <div className="absolute -bottom-16 -right-10 h-40 w-40 rounded-full bg-mb-violet/15 blur-3xl" />
-          <div className="relative">
+      <Panel hover>
+          <div className="grid gap-5 md:grid-cols-[auto_1fr_auto] md:items-center">
+            <span className="grid h-11 w-11 place-items-center rounded-xl border border-mb-cyan/20 bg-mb-cyan/10 text-mb-cyan">
+              <FocusIcon className="h-5 w-5" />
+            </span>
+            <div>
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-mb-cyan">
-              <FocusIcon className="h-4 w-4" /> Gentle focus
+              Gentle focus
             </div>
-            <h3 className="mt-3 text-2xl font-extrabold">{focusInfo.title}</h3>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{focusInfo.text}</p>
-            <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.045] p-4 backdrop-blur-md">
-              <p className="font-serif italic tracking-wide text-xl leading-relaxed text-foreground/90">“{getWellnessQuote(seed, 17)}”</p>
+              <h3 className="mt-2 text-xl font-extrabold">{focusInfo.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{focusInfo.text}</p>
             </div>
-            <Link to="/insights" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-mb-cyan transition hover:gap-3">
+            <Link to="/insights" className="inline-flex items-center gap-2 text-sm font-bold text-mb-cyan transition hover:gap-3">
               Turn this into a plan <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-        </Panel>
-      </div>
-
-      <section className="relative isolate overflow-hidden rounded-[26px] border border-white/10 shadow-mb-card">
-        <img src={quoteArt} alt="" loading="lazy" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-30" />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(2,10,25,.96),rgba(8,24,45,.88),rgba(16,32,58,.45))]" />
-        <div className="relative flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between md:p-7">
-          <div className="max-w-2xl">
-            <p className="flex items-center gap-2 text-base font-bold"><Heart className="h-4 w-4 text-mb-cyan" /> Keep this close</p>
-            <p className="mt-2 text-lg leading-relaxed text-white/85">“{getWellnessQuote(seed, 23)}”</p>
-          </div>
-          <Link to="/chat" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur-md transition hover:bg-white/15">
-            Talk it through <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
+      </Panel>
     </>
   );
 }

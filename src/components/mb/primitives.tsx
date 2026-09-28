@@ -33,14 +33,15 @@ export function SectionTitle({ children, sub }: { children: ReactNode; sub?: str
   );
 }
 
-export function StatusPill({ tone, children }: { tone: "good" | "warn" | "bad"; children: ReactNode }) {
+export function StatusPill({ tone, children, className }: { tone: "good" | "warn" | "bad"; children: ReactNode; className?: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold",
-        tone === "good" && "bg-mb-green/15 text-mb-green",
-        tone === "warn" && "bg-mb-amber/15 text-mb-amber",
-        tone === "bad" && "bg-mb-pink/15 text-mb-pink",
+        "inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold",
+        tone === "good" && "border-mb-cyan/20 bg-mb-cyan/10 text-mb-cyan",
+        tone === "warn" && "border-primary/20 bg-primary/10 text-primary",
+        tone === "bad" && "border-mb-violet/25 bg-mb-violet/10 text-mb-violet",
+        className,
       )}
     >
       {children}
