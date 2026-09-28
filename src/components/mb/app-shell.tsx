@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ClipboardList, Home, Info, LineChart, LogOut, MessageCircle, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { BrandMark } from "@/components/mb/brand-mark";
+import { BrandLockup } from "@/components/mb/brand-mark";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -41,13 +41,7 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
         <aside className="sticky top-0 hidden h-screen w-[220px] shrink-0 flex-col justify-between border-r border-white/10 bg-[#020817]/65 px-3.5 py-5 backdrop-blur-2xl lg:flex">
           <div>
             <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3 shadow-[0_20px_60px_-40px_rgba(34,211,238,.5)] backdrop-blur-xl">
-              <div className="flex items-center gap-2.5 px-1">
-                <BrandMark className="h-9 w-11" />
-                <div>
-                  <p className="bg-gradient-to-r from-mb-cyan to-primary bg-clip-text text-[15px] font-extrabold leading-tight tracking-[0.08em] text-transparent">VRITTACARE</p>
-                  <p className="max-w-[145px] text-[9px] leading-tight text-muted-foreground">Mental Health Prediction System</p>
-                </div>
-              </div>
+              <BrandLockup compact className="px-1" />
             </div>
 
             <nav className="mt-7 space-y-1.5">
@@ -86,6 +80,9 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
         </aside>
 
         <main className="min-w-0 flex-1 p-3 pb-20 sm:p-5 lg:pb-5 xl:p-6 2xl:p-7">
+          <div className="mb-4 flex items-center border-b border-white/10 pb-3 lg:hidden">
+            <BrandLockup compact />
+          </div>
           <div className="mx-auto max-w-[1180px] space-y-5">{children}</div>
         </main>
 

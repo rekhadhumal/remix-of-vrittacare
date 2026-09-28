@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import authLandscape from "@/assets/vrittacare-auth-landscape.jpg";
-import { BrandMark } from "@/components/mb/brand-mark";
+import { BrandLockup } from "@/components/mb/brand-mark";
 import { Button } from "@/components/ui/button";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
@@ -102,13 +102,7 @@ function AuthPage() {
 
       <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[1480px] items-center gap-8 px-5 py-8 sm:px-9 lg:grid-cols-[minmax(0,1.08fr)_minmax(430px,0.92fr)] lg:gap-14 lg:px-14 xl:px-20">
         <section className="auth-brand-lockup self-start pt-1 text-center sm:pt-5 lg:self-stretch lg:pt-[7vh]" aria-label="VRITTACARE">
-          <BrandMark large className="brand-mark mx-auto" />
-          <p className="mt-4 text-[27px] font-extrabold leading-none tracking-[0.12em] text-foreground drop-shadow-[0_0_18px_var(--auth-cyan-glow)] sm:text-[34px]">
-            VRITTA<span className="text-mb-cyan">CARE</span>
-          </p>
-          <p className="mt-2 text-[13px] font-semibold text-foreground/95 drop-shadow-md sm:text-[16px]">
-            Student&apos;s Mental Wellness Companion
-          </p>
+          <BrandLockup />
         </section>
 
         <section className="auth-reference-card w-full max-w-[540px] justify-self-end rounded-[22px] border border-auth-bright-line px-5 py-7 shadow-auth-card backdrop-blur-xl sm:px-9 sm:py-9 lg:px-10" aria-label={mode === "signin" ? "Sign in" : "Create account"}>
