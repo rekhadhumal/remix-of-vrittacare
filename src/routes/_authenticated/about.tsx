@@ -120,11 +120,11 @@ function AboutPage() {
                 <div className="grid h-11 w-11 place-items-center rounded-xl bg-mb-violet/10 text-mb-violet"><UserRound className="h-5 w-5" /></div>
                 <div>
                   <h3 className="font-extrabold tracking-wide">VAIBHAV SOLANKE</h3>
-                  <p className="text-xs text-muted-foreground">Project foundation, data understanding & collaboration</p>
+                  <p className="text-xs text-muted-foreground">Technical setup, data groundwork & collaboration</p>
                 </div>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Vaibhav established the project’s technical setup and working environment, organized the required dependencies, and contributed to understanding the dataset and project requirements. Through ongoing technical discussions and direction input, he helped connect the data-science work to a coherent student-facing product and supported practical decisions throughout development.
+                Vaibhav contributed to the project's technical setup and working environment, helping organize dependencies and understand the dataset and project requirements. He also took part in technical discussions and product-direction decisions, helping keep the project grounded in a practical student-facing experience.
               </p>
               <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-mb-violet">
                 <span className="rounded-full border border-mb-violet/15 bg-mb-violet/5 px-3 py-1">Technical Foundation</span>
