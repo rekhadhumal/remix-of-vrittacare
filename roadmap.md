@@ -11,3 +11,5 @@
 - [x] Use the latest real FastAPI score, category, and response groups across Results, Dashboard, and Insights.
 - [x] Apply the approved surgical UI refinement pass across Results, Dashboard, Insights, sidebar, and About.
 - [x] Verify the refinement with type/build checks and responsive signed-in page screenshots.
+
+- [ ] Refine the shared VRITTACARE full/compact brand lockups and matching favicon from the supplied visual reference.
