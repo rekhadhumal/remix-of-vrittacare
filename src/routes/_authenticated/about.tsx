@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Brain, Database, HeartHandshake, ShieldCheck, Sparkles, UserRound } from "lucide-react";
+import { Database, HeartHandshake, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 
 import { AppShell } from "@/components/mb/app-shell";
+import { BrandLockup } from "@/components/mb/brand-mark";
 import { Panel, SectionTitle } from "@/components/mb/primitives";
 
 export const Route = createFileRoute("/_authenticated/about")({
@@ -26,15 +27,8 @@ function AboutPage() {
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-mb-cyan/12 blur-3xl" />
           <div className="absolute -bottom-24 left-1/4 h-56 w-56 rounded-full bg-mb-violet/10 blur-3xl" />
           <div className="relative max-w-4xl">
-            <div className="flex items-center gap-3">
-              <div className="grid h-12 w-12 place-items-center rounded-2xl border border-mb-cyan/20 bg-mb-cyan/10 text-mb-cyan shadow-mb-glow">
-                <Brain className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-mb-cyan">The project behind the experience</p>
-                <h1 className="mt-1 text-3xl font-extrabold md:text-4xl">About VRITTACARE</h1>
-              </div>
-            </div>
+            <BrandLockup className="items-start text-left" />
+            <h1 className="mt-5 text-2xl font-extrabold md:text-3xl">About the project</h1>
 
             <p className="mt-6 text-base leading-8 text-foreground/80">
               VRITTACARE is a student-built Mental Health Prediction System created to explore how everyday digital habits and lifestyle patterns can be turned into understandable, personalized wellness insights. The project combines a trained machine-learning model with a calm, interactive frontend so that a student can move from <span className="font-semibold text-mb-cyan">answers → prediction → understanding → small actions</span> without feeling overwhelmed by technical data.

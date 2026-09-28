@@ -1,31 +1,50 @@
+import { useId } from "react";
+
 import { cn } from "@/lib/utils";
 
 export function BrandMark({ className, large = false }: { className?: string; large?: boolean }) {
-  const size = large ? "h-[74px] w-[94px]" : "h-11 w-14";
+  const size = large ? "h-[82px] w-[102px]" : "h-11 w-14";
+  const gradientId = useId().replaceAll(":", "");
 
   return (
-    <span className={cn("relative inline-block shrink-0", size, className)} aria-hidden="true">
-      <svg viewBox="0 0 96 64" className="h-full w-full overflow-visible" fill="none">
-        <g stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
-          <path
-            d="M48 10C44 6 39 6 35 9C29 6 22 10 22 16C16 16 12 21 13 27C9 31 10 38 15 41C14 47 19 52 25 51C29 57 37 57 41 52C44 54 46 53 48 51"
-            className="text-mb-cyan"
-          />
-          <path
-            d="M48 10C52 6 57 6 61 9C67 6 74 10 74 16C80 16 84 21 83 27C87 31 86 38 81 41C82 47 77 52 71 51C67 57 59 57 55 52C52 54 50 53 48 51"
-            className="text-mb-cyan"
-          />
-          <path d="M48 11V50" className="text-mb-cyan" />
-          <path d="M29 21C34 19 38 22 39 27" className="text-mb-cyan/80" />
-          <path d="M67 21C62 19 58 22 57 27" className="text-mb-cyan/80" />
-          <path d="M25 34C31 31 36 34 39 39" className="text-mb-cyan/80" />
-          <path d="M71 34C65 31 60 34 57 39" className="text-mb-cyan/80" />
-        </g>
-        <g stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-          <path d="M57 45C62 37 70 36 77 39C74 47 67 51 58 50Z" />
-          <path d="M58 49C63 45 68 42 75 39" />
+    <span className={cn("brand-symbol relative inline-block shrink-0", size, className)} aria-hidden="true">
+      <svg viewBox="0 0 104 76" className="h-full w-full overflow-visible" fill="none">
+        <defs>
+          <linearGradient id={gradientId} x1="15" y1="11" x2="91" y2="65" gradientUnits="userSpaceOnUse">
+            <stop stopColor="var(--mb-cyan)" />
+            <stop offset="1" stopColor="var(--primary)" />
+          </linearGradient>
+        </defs>
+        <g stroke={`url(#${gradientId})`} strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M40 13C36 8 30 8 26 12C20 9 14 14 15 21C10 22 7 29 10 34C6 39 8 47 14 49C13 57 19 62 26 59C30 65 37 62 40 57V13Z" />
+          <path d="M42 13C46 8 52 8 56 12C62 9 68 14 67 21C72 22 75 29 72 34C76 39 74 47 68 49C69 57 63 62 56 59C52 65 45 62 42 57V13Z" />
+          <path d="M40 17C35 15 31 18 31 23M40 30C35 27 30 30 30 35M40 44C35 40 30 43 30 49" />
+          <path d="M42 17C47 15 51 18 51 23M42 30C47 27 52 30 52 35M42 44C47 40 52 43 52 49M58 19C55 21 54 25 56 29M24 20C27 22 28 26 26 30M17 35C22 34 26 37 26 42M65 35C60 34 56 37 56 42M18 49C22 46 27 48 29 53M64 49C60 46 55 48 53 53" />
+          <path d="M41 13V58" />
+          <path d="M49 59C58 46 70 42 91 44C87 58 74 66 51 63Z" />
+          <path d="M51 63C62 55 75 49 89 45" />
+          <path d="M52 57C53 47 48 40 41 37C39 47 43 54 52 57Z" />
         </g>
       </svg>
     </span>
+  );
+}
+
+export function BrandLockup({ compact = false, className }: { compact?: boolean; className?: string }) {
+  if (compact) {
+    return (
+      <div className={cn("brand-lockup flex items-center gap-2.5", className)} aria-label="VRITTACARE">
+        <BrandMark className="h-9 w-12" />
+        <span className="brand-wordmark text-[15px] font-bold leading-none text-foreground">VRITTACARE</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn("brand-lockup flex flex-col items-center text-center", className)} aria-label="VRITTACARE — Student's Mental Wellness Companion">
+      <BrandMark large />
+      <span className="brand-wordmark mt-3 text-[27px] font-bold leading-none text-foreground sm:text-[34px]">VRITTACARE</span>
+      <span className="brand-subtitle mt-2 text-[13px] font-medium text-foreground/90 sm:text-[16px]">Student&apos;s Mental Wellness Companion</span>
+    </div>
   );
 }
