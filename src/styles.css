@@ -180,11 +180,6 @@
   --shadow-auth-mark: 0 0 14px 3px oklch(0.83 0.14 195 / 60%);
 }
 
-.brand-symbol {
-  color: var(--mb-cyan);
-  filter: drop-shadow(0 0 5px color-mix(in oklab, var(--mb-cyan) 65%, transparent));
-}
-
 .brand-wordmark {
   letter-spacing: 0.15em;
   background: linear-gradient(100deg, var(--foreground) 5%, var(--mb-cyan) 56%, var(--primary) 100%);
@@ -196,12 +191,6 @@
 .brand-subtitle {
   letter-spacing: 0;
   text-shadow: 0 1px 10px color-mix(in oklab, var(--background) 75%, transparent);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .brand-symbol {
-    filter: drop-shadow(0 0 3px color-mix(in oklab, var(--mb-cyan) 45%, transparent));
-  }
 }
 
 @theme inline {
