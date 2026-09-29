@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Reuse `BrandMark`/`BrandLockup` for every VRITTACARE identity placement and `WellnessMetrics` for the five assessment stat cards, preserving visual consistency.
+- Use the uploaded VRITTACARE PNG through its asset pointer in `BrandMark`, never redraw it; the user's final approved artwork is the single identity source.

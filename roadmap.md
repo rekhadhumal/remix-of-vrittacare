@@ -12,4 +12,4 @@
 - [x] Apply the approved surgical UI refinement pass across Results, Dashboard, Insights, sidebar, and About.
 - [x] Verify the refinement with type/build checks and responsive signed-in page screenshots.
 
-- [x] Closely reproduce the supplied VRITTACARE brain-leaf geometry, luminous full/compact lockups, typography hierarchy, and favicon in vector code.
+- [x] Replace the earlier vector recreation with the final approved uploaded PNG across full and compact lockups and the favicon.
