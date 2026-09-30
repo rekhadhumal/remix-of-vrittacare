@@ -8,7 +8,7 @@ export function BrandMark({ className, large = false }: { className?: string; la
       alt=""
       width={680}
       height={530}
-      className={cn("block h-auto shrink-0 object-contain", large ? "w-[185px] sm:w-[220px]" : "w-[50px]", className)}
+      className={cn("block h-auto shrink-0 object-contain", large ? "w-[176px] sm:w-[209px]" : "w-[47px]", className)}
       aria-hidden="true"
     />
   );
@@ -27,8 +27,8 @@ export function BrandLockup({ compact = false, className }: { compact?: boolean;
   return (
     <div className={cn("brand-lockup flex flex-col items-center text-center", className)} aria-label="VRITTACARE — Student's Mental Wellness Companion">
       <BrandMark large />
-      <span className="brand-wordmark mt-2.5 text-[25px] font-bold leading-none text-foreground sm:text-[31px]">VRITTACARE</span>
-      <span className="brand-subtitle mt-1.5 text-[12px] font-medium text-foreground/90 sm:text-[15px]">Student&apos;s Mental Wellness Companion</span>
+      <span className="brand-wordmark mt-2.5 text-[24px] font-bold leading-none text-foreground sm:text-[30px]">VRITTACARE</span>
+      <span className="brand-subtitle mt-1.5 text-[11.5px] font-medium text-foreground/90 sm:text-[14px]">Student&apos;s Mental Wellness Companion</span>
     </div>
   );
 }
