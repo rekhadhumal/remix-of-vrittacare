@@ -32,7 +32,7 @@ const HERO_QUOTES = [
   "You do not need to have it all figured out to take the next meaningful step.",
   "The life you want is often shaped by the small choices you repeat when nobody is watching.",
   "Give yourself permission to grow at a pace that still lets you breathe.",
-  "A difficult season does not get to write the whole story of who you become.",
+  "You don’t need all the answers to begin. Sometimes, the first step is simply checking in.",
   "Your next chapter does not need a dramatic beginning — it needs an honest one.",
   "Keep choosing the things that make tomorrow a little kinder to meet.",
   "You can be ambitious about your future and gentle with yourself at the same time.",
