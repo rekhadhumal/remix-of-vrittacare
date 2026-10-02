@@ -205,7 +205,7 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
   return (
     <>
       <div className="grid gap-4 lg:grid-cols-[1.06fr_0.94fr]">
-        <Panel hover className="relative overflow-hidden">
+        <Panel hover className="relative h-fit self-start overflow-hidden">
           <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-mb-cyan/12 blur-3xl" />
           <div className="relative flex flex-col gap-5 md:flex-row md:items-center">
             <div className="relative shrink-0">
