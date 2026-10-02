@@ -10,6 +10,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { getInsightOpener, getUserSeed, getWellnessQuote } from "@/lib/personalization";
 
 export const Route = createFileRoute("/_authenticated/insights")({
+  errorComponent: () => (
+    <AppShell>
+      <Panel>
+        <SectionTitle sub="Your assessment data is still safe.">Insights could not load</SectionTitle>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          Please return to the dashboard and open Insights & Tips again.
+        </p>
+        <Link to="/dashboard" className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-mb-cyan to-primary px-5 py-3 text-sm font-bold text-primary-foreground">
+          Back to Dashboard <ArrowRight className="h-4 w-4" />
+        </Link>
+      </Panel>
+    </AppShell>
+  ),
   head: () => ({
     meta: [
       { title: "Your Next Steps · VRITTACARE" },
@@ -43,7 +56,11 @@ function InsightsPage() {
 
   const signals = useMemo(() => {
     if (!assessment) return [];
-    return radarValues(assessment);
+    try {
+      return radarValues(assessment).filter((item) => Number.isFinite(item.value));
+    } catch {
+      return [];
+    }
   }, [assessment]);
 
   const strongest = useMemo(() => {
@@ -56,9 +73,9 @@ function InsightsPage() {
     return signals.reduce((lowest, item) => (item.value < lowest.value ? item : lowest), signals[0]);
   }, [signals]);
 
-  const actionItems = saved?.result.needs_attention ?? [];
-  const watchItems = saved?.result.watch ?? [];
-  const stableItems = saved?.result.stable ?? [];
+  const actionItems = Array.isArray(saved?.result.needs_attention) ? saved.result.needs_attention : [];
+  const watchItems = Array.isArray(saved?.result.watch) ? saved.result.watch : [];
+  const stableItems = Array.isArray(saved?.result.stable) ? saved.result.stable : [];
 
   const insightCard = (item: PredictionItem, tone: "cyan" | "violet") => (
     <article className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-md">
@@ -209,7 +226,7 @@ function InsightsPage() {
                   <div key={`why-${item.area}`} className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
                     <p className="font-bold">{item.area}</p>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      Your latest assessment placed this signal in the <span className="font-semibold text-foreground/80">{item.interpretation.toLowerCase()}</span> group. The guidance above is based on the current assessment snapshot, not a medical diagnosis.
+                      Your latest assessment placed this signal in the <span className="font-semibold text-foreground/80">{(item.interpretation || "current assessment").toLowerCase()}</span> group. The guidance above is based on the current assessment snapshot, not a medical diagnosis.
                     </p>
                   </div>
                 ))}
