@@ -204,7 +204,7 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
 
   return (
     <>
-      <div className="grid gap-4 lg:grid-cols-[1.06fr_0.94fr]">
+      <div className="grid items-start gap-4 lg:grid-cols-[1.06fr_0.94fr]">
         <Panel hover className="relative h-fit self-start overflow-hidden">
           <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-mb-cyan/12 blur-3xl" />
           <div className="relative flex flex-col gap-5 md:flex-row md:items-center">
@@ -248,7 +248,7 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
               </DialogContent>
             </Dialog>
           </div>
-          <div className="relative min-h-[250px]">
+          <div className="relative">
             <div className="pointer-events-none absolute inset-x-1/4 top-1/4 h-36 rounded-full bg-mb-cyan/10 blur-3xl" />
             <AdaptiveProfile assessment={assessment} data={radar} />
           </div>
