@@ -6,12 +6,20 @@ import type { AssessmentInput } from "./mb";
 
 export const PREDICTION_URL = "http://127.0.0.1:8000/predict";
 
+export type PredictionItem = {
+  area: string;
+  current_value: string | number;
+  interpretation: string;
+  message: string;
+  estimated_score_change?: number;
+};
+
 export type PredictionResponse = {
   score: number;
   category: string;
-  needs_attention: string[];
-  watch: string[];
-  stable: string[];
+  needs_attention: PredictionItem[];
+  watch: PredictionItem[];
+  stable: PredictionItem[];
 };
 
 export type SavedPrediction = {
@@ -43,7 +51,7 @@ function toPayload(a: AssessmentInput) {
   };
 }
 
-function toItems(value: unknown): string[] {
+function toItems(value: unknown): PredictionItem[] {
   if (!Array.isArray(value)) return [];
 
   return value
@@ -103,7 +111,7 @@ function toItems(value: unknown): string[] {
         ? `${details.join(" — ")}${change}`
         : "";
     })
-    .filter((item): item is string => item.length > 0);
+    .filter((item): item is PredictionItem => item !== null && item.area.length > 0);
 }
 
 export async function predictMentalHealth(
