@@ -69,7 +69,6 @@ export function ScoreGauge({ score, max = 10 }: { score: number; max?: number })
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={c * (1 - progress)}
-          pathLength={1}
           style={{ transition: "stroke-dashoffset 1.4s cubic-bezier(0.22,1,0.36,1)", filter: "drop-shadow(0 0 10px var(--mb-cyan))" }}
         />
         <circle
