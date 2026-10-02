@@ -116,9 +116,6 @@ function DashboardPage() {
             There is no perfect score to chase here. VRITTACARE is designed to help you notice patterns,
             understand them, and choose one small step at a time.
           </p>
-          <Link to="/assessment" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-mb-cyan to-primary px-5 py-3 text-sm font-bold text-primary-foreground shadow-mb-glow transition hover:-translate-y-0.5 hover:brightness-110">
-            Take Assessment <ArrowRight className="h-4 w-4" />
-          </Link>
         </Panel>
       ) : (
         <DashboardBody data={data} saved={saved} seed={userSeed} />
