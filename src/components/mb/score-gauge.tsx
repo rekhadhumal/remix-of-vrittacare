@@ -42,7 +42,7 @@ export function ScoreGauge({ score, max = 10 }: { score: number; max?: number })
         </defs>
 
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="url(#mb-gauge-track)" strokeWidth={stroke} />
-        {[0, 2, 4, 6, 8, 10].map((tick) => {
+        {[0, 2, 4, 6, 8].map((tick) => {
           const angle = (tick / max) * Math.PI * 2 - Math.PI / 2;
           const outer = r + 12;
           const inner = r + 5;
@@ -54,7 +54,7 @@ export function ScoreGauge({ score, max = 10 }: { score: number; max?: number })
               x2={size / 2 + Math.cos(angle) * outer}
               y2={size / 2 + Math.sin(angle) * outer}
               stroke="var(--mb-line)"
-              strokeWidth={tick === 0 || tick === 10 ? 2 : 1}
+              strokeWidth={tick === 0 ? 2 : 1}
               strokeLinecap="round"
             />
           );
