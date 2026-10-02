@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle2, Heart, Lightbulb, Moon, Sparkles, Wind } from
 
 import { AppShell } from "@/components/mb/app-shell";
 import { Panel, SectionTitle, StatusPill } from "@/components/mb/primitives";
-import { loadPrediction, type SavedPrediction } from "@/lib/prediction";
+import { loadPrediction, type PredictionItem, type SavedPrediction } from "@/lib/prediction";
 import { radarValues, scoreStatus } from "@/lib/mb";
 import { supabase } from "@/integrations/supabase/client";
 import { getInsightOpener, getUserSeed, getWellnessQuote } from "@/lib/personalization";
@@ -41,78 +41,45 @@ function InsightsPage() {
   const assessment = saved?.assessment ?? null;
   const status = saved ? scoreStatus(saved.result.score) : null;
 
-  const plan = useMemo(() => {
+  const signals = useMemo(() => {
     if (!assessment) return [];
-
-    const items: Array<{
-      icon: typeof Heart;
-      title: string;
-      detail: string;
-      tone: "cyan" | "violet";
-    }> = [];
-
-    if (assessment.physical_activity_hours < 1.5) {
-      items.push({
-        icon: Heart,
-        title: "Move for a few minutes",
-        detail: "Try a 15–30 minute walk, gentle stretching, or any movement you genuinely enjoy. Consistency matters more than intensity.",
-        tone: "cyan",
-      });
-    }
-
-    if (assessment.avg_daily_usage_hours > 3) {
-      items.push({
-        icon: Sparkles,
-        title: "Create one screen-free pocket",
-        detail: "Choose one small window — during a meal, before bed, or while walking — where your phone stays out of reach.",
-        tone: "violet",
-      });
-    }
-
-    if (assessment.sleep_hours_per_night < 7) {
-      items.push({
-        icon: Moon,
-        title: "Protect your sleep window",
-        detail: "Try moving bedtime slightly earlier and keeping your wind-down routine predictable for a few nights.",
-        tone: "cyan",
-      });
-    }
-
-    if (assessment.stress_level !== "Low") {
-      items.push({
-        icon: Wind,
-        title: "Give stress somewhere to go",
-        detail: "Take a slow breathing break, step outside, write down what is weighing on you, or talk with someone you trust.",
-        tone: "violet",
-      });
-    }
-
-    if (assessment.study_hours < 3) {
-      items.push({
-        icon: Lightbulb,
-        title: "Use one focused study block",
-        detail: "Pick one small task, work without distractions for a short block, then take a proper break. Smaller starts can feel easier.",
-        tone: "cyan",
-      });
-    }
-
-    if (items.length === 0) {
-      items.push({
-        icon: CheckCircle2,
-        title: "Protect what is already working",
-        detail: "Your current habits look fairly balanced. Keep the routines that feel sustainable and make room for rest and connection.",
-        tone: "cyan",
-      });
-    }
-
-    return items.slice(0, 4);
+    return radarValues(assessment);
   }, [assessment]);
 
   const strongest = useMemo(() => {
-    if (!assessment) return null;
-    const values = radarValues(assessment);
-    return values.reduce((best, item) => (item.value > best.value ? item : best), values[0] ?? { label: "Your routine", value: 0 });
-  }, [assessment]);
+    if (!signals.length) return null;
+    return signals.reduce((best, item) => (item.value > best.value ? item : best), signals[0]);
+  }, [signals]);
+
+  const focus = useMemo(() => {
+    if (!signals.length) return null;
+    return signals.reduce((lowest, item) => (item.value < lowest.value ? item : lowest), signals[0]);
+  }, [signals]);
+
+  const actionItems = saved?.result.needs_attention ?? [];
+  const watchItems = saved?.result.watch ?? [];
+  const stableItems = saved?.result.stable ?? [];
+
+  const insightCard = (item: PredictionItem, tone: "cyan" | "violet") => (
+    <article className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-md">
+      <div className="flex items-start gap-3">
+        <div className={"grid h-10 w-10 shrink-0 place-items-center rounded-xl " + (tone === "violet" ? "bg-mb-violet/10 text-mb-violet" : "bg-mb-cyan/10 text-mb-cyan")}>
+          <Sparkles className="h-5 w-5" />
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">{item.interpretation}</p>
+          <h3 className="mt-1 text-base font-bold">{item.area}</h3>
+          <p className="mt-1 text-sm text-foreground/80">Current: <span className="font-semibold">{String(item.current_value)}</span></p>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.message}</p>
+          {typeof item.estimated_score_change === "number" ? (
+            <p className="mt-3 text-xs font-semibold text-mb-cyan">
+              Estimated change if improved: +{item.estimated_score_change.toFixed(2)}
+            </p>
+          ) : null}
+        </div>
+      </div>
+    </article>
+  );
 
   return (
     <AppShell>
@@ -161,55 +128,91 @@ function InsightsPage() {
           <>
             <div className="grid gap-4 lg:grid-cols-[1.1fr_.9fr]">
               <Panel hover className="relative overflow-hidden">
-                <SectionTitle sub="Start with one thing. You do not need to fix everything today.">Your 3-minute starting point</SectionTitle>
-                <div className="mt-2 rounded-2xl border border-mb-cyan/15 bg-mb-cyan/[0.05] p-5">
-                  <div className="flex items-start gap-3">
-                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-mb-cyan/10 text-mb-cyan">
-                      <Sparkles className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="font-bold">{plan[0]?.title ?? "Take one quiet pause"}</p>
-                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                        {plan[0]?.detail ?? "Take three slow breaths, notice how you feel, and choose one kind action for yourself."}
-                      </p>
-                    </div>
+                <SectionTitle sub="Your profile is built from five everyday signals in your latest assessment.">What shaped your result</SectionTitle>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-mb-cyan/15 bg-mb-cyan/[0.05] p-5">
+                    <p className="text-xs uppercase tracking-[0.16em] text-mb-cyan">Strongest signal</p>
+                    <p className="mt-2 text-2xl font-extrabold">{strongest?.label}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {strongest ? `${strongest.label} currently sits highest in your personal profile at ${Math.round(strongest.value)}%.` : "Your profile will appear after an assessment."}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-mb-violet/15 bg-mb-violet/[0.05] p-5">
+                    <p className="text-xs uppercase tracking-[0.16em] text-mb-violet">Area to notice</p>
+                    <p className="mt-2 text-2xl font-extrabold">{focus?.label}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {focus ? `${focus.label} currently sits lowest in your personal profile at ${Math.round(focus.value)}%.` : "Your profile will appear after an assessment."}
+                    </p>
                   </div>
                 </div>
-                <p className="mt-5 border-l-2 border-mb-cyan/40 pl-4 text-lg font-medium leading-relaxed text-foreground/90">“{getWellnessQuote(userSeed, 11)}”</p>
+                <p className="mt-5 border-l-2 border-mb-cyan/40 pl-4 text-lg font-medium leading-relaxed text-foreground/90">
+                  “{getWellnessQuote(userSeed, 11)}”
+                </p>
               </Panel>
 
               <Panel hover>
-                <SectionTitle sub="A simple reading of your five lifestyle signals.">What is supporting you</SectionTitle>
-                <div className="mt-3 rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-                  <p className="text-xs uppercase tracking-[0.16em] text-mb-cyan">Strongest signal</p>
-                  <p className="mt-2 text-2xl font-extrabold">{strongest?.label}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    This area currently sits highest in your personal wellness profile. Keep the habit sustainable rather than trying to make it perfect.
-                  </p>
+                <SectionTitle sub="The chart shows the pattern; these numbers show what you actually reported.">Your latest signals</SectionTitle>
+                <div className="mt-3 space-y-2">
+                  {assessment ? (
+                    <>
+                      {[
+                        ["Sleep", `${assessment.sleep_hours_per_night} hrs`],
+                        ["Study", `${assessment.study_hours} hrs`],
+                        ["Screen Usage", `${assessment.avg_daily_usage_hours} hrs`],
+                        ["Activity", `${assessment.physical_activity_hours} hrs`],
+                        ["Stress", assessment.stress_level],
+                      ].map(([label, value]) => (
+                        <div key={label} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.035] px-4 py-3">
+                          <span className="text-sm font-semibold">{label}</span>
+                          <span className="text-sm text-muted-foreground">{value}</span>
+                        </div>
+                      ))}
+                    </>
+                  ) : null}
                 </div>
               </Panel>
             </div>
 
             <Panel>
-              <SectionTitle sub="These are actions, not rules. Pick the ones that fit your real life.">Your small-step plan</SectionTitle>
-              <div className="grid gap-3 md:grid-cols-2">
-                {plan.map((item, index) => {
-                  const Icon = item.icon;
-                  return (
-                    <article key={item.title} className="group rounded-2xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-mb-cyan/25 hover:bg-white/[0.055]">
-                      <div className="flex items-start gap-3">
-                        <div className={"grid h-10 w-10 shrink-0 place-items-center rounded-xl " + (item.tone === "violet" ? "bg-mb-violet/10 text-mb-violet" : "bg-mb-cyan/10 text-mb-cyan")}>
-                          <Icon className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Step {index + 1}</p>
-                          <h3 className="mt-1 text-base font-bold">{item.title}</h3>
-                          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.detail}</p>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
+              <SectionTitle sub="Your prediction already groups these signals into areas to keep, watch, or act on.">What to focus on</SectionTitle>
+              <div className="mt-3 grid gap-4 lg:grid-cols-3">
+                <div className="rounded-2xl border border-mb-cyan/20 bg-mb-cyan/[0.045] p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-mb-cyan">Act</p>
+                  <p className="mt-2 text-lg font-extrabold">{actionItems.length} area{actionItems.length === 1 ? "" : "s"} need attention</p>
+                  <div className="mt-4 space-y-3">
+                    {actionItems.length ? actionItems.map((item) => <div key={item.area}>{insightCard(item, "cyan")}</div>) : <p className="text-sm text-muted-foreground">No areas are currently flagged for attention.</p>}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">Watch</p>
+                  <p className="mt-2 text-lg font-extrabold">{watchItems.length} area{watchItems.length === 1 ? "" : "s"} could improve</p>
+                  <div className="mt-4 space-y-3">
+                    {watchItems.length ? watchItems.map((item) => <div key={item.area}>{insightCard(item, "violet")}</div>) : <p className="text-sm text-muted-foreground">Nothing is currently in the watch group.</p>}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-mb-cyan">Keep</p>
+                  <p className="mt-2 text-lg font-extrabold">{stableItems.length} area{stableItems.length === 1 ? "" : "s"} are going well</p>
+                  <div className="mt-4 space-y-3">
+                    {stableItems.length ? stableItems.map((item) => <div key={item.area}>{insightCard(item, "cyan")}</div>) : <p className="text-sm text-muted-foreground">No stable areas were returned for this assessment.</p>}
+                  </div>
+                </div>
+              </div>
+            </Panel>
+
+            <Panel>
+              <SectionTitle sub="The model highlights patterns; the practical next step is yours to choose.">Why these areas are highlighted</SectionTitle>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                {[...actionItems, ...watchItems].slice(0, 4).map((item) => (
+                  <div key={`why-${item.area}`} className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
+                    <p className="font-bold">{item.area}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      Your latest assessment placed this signal in the <span className="font-semibold text-foreground/80">{item.interpretation.toLowerCase()}</span> group. The guidance above is based on the current assessment snapshot, not a medical diagnosis.
+                    </p>
+                  </div>
+                ))}
               </div>
             </Panel>
 
