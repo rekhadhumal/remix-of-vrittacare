@@ -55,16 +55,16 @@ function toItems(value: unknown): PredictionItem[] {
   if (!Array.isArray(value)) return [];
 
   return value
-    .map((item) => {
-      // Support old string-format items
+    .map((item): PredictionItem | null => {
       if (typeof item === "string") {
-        return item.trim();
+        const area = item.trim();
+        return area
+          ? { area, current_value: "", interpretation: "From your assessment", message: area }
+          : null;
       }
 
-      // Ignore invalid items
-      if (!item || typeof item !== "object") return "";
+      if (!item || typeof item !== "object") return null;
 
-      // Support the actual FastAPI object response
       const entry = item as {
         area?: unknown;
         current_value?: unknown;
@@ -73,45 +73,28 @@ function toItems(value: unknown): PredictionItem[] {
         estimated_score_change?: unknown;
       };
 
-      const area =
-        typeof entry.area === "string"
-          ? entry.area.trim()
+      const area = typeof entry.area === "string" ? entry.area.trim() : "";
+      const interpretation = typeof entry.interpretation === "string" ? entry.interpretation.trim() : "";
+      const message = typeof entry.message === "string" ? entry.message.trim() : "";
+      const current_value =
+        typeof entry.current_value === "string" || typeof entry.current_value === "number"
+          ? entry.current_value
           : "";
 
-      const interpretation =
-        typeof entry.interpretation === "string"
-          ? entry.interpretation.trim()
-          : "";
+      if (!area) return null;
 
-      const message =
-        typeof entry.message === "string"
-          ? entry.message.trim()
-          : "";
-
-      const currentValue =
-        typeof entry.current_value === "string" ||
-        typeof entry.current_value === "number"
-          ? String(entry.current_value)
-          : "";
-
-      const change =
-        typeof entry.estimated_score_change === "number" &&
-        Number.isFinite(entry.estimated_score_change)
-          ? ` (estimated score change: +${entry.estimated_score_change.toFixed(2)})`
-          : "";
-
-      const details = [
+      return {
         area,
-        currentValue ? `Current: ${currentValue}` : "",
+        current_value,
         interpretation,
         message,
-      ].filter(Boolean);
-
-      return details.length > 0
-        ? `${details.join(" — ")}${change}`
-        : "";
+        ...(typeof entry.estimated_score_change === "number" &&
+        Number.isFinite(entry.estimated_score_change)
+          ? { estimated_score_change: entry.estimated_score_change }
+          : {}),
+      };
     })
-    .filter((item): item is PredictionItem => item !== null && item.area.length > 0);
+    .filter((item): item is PredictionItem => item !== null);
 }
 
 export async function predictMentalHealth(
