@@ -17,11 +17,11 @@ function signalLabel(value: number) {
 }
 
 function rawValue(label: string, assessment: Record<string, unknown>) {
-  if (label === "Sleep") return typeof assessment.sleep_hours_per_night === "number" ? `${assessment.sleep_hours_per_night.toFixed(1)} hrs` : "";
-  if (label === "Study") return typeof assessment.study_hours === "number" ? `${assessment.study_hours.toFixed(1)} hrs` : "";
-  if (label === "Activity") return typeof assessment.physical_activity_hours === "number" ? `${assessment.physical_activity_hours.toFixed(1)} hrs` : "";
-  if (label === "Screen Usage") return typeof assessment.avg_daily_usage_hours === "number" ? `${assessment.avg_daily_usage_hours.toFixed(1)} hrs` : "";
-  if (label === "Stress") return typeof assessment.stress_level === "string" ? assessment.stress_level : "";
+  if (label === "Sleep") return typeof assessment["sleep_hours_per_night"] === "number" ? `${(assessment["sleep_hours_per_night"] as number).toFixed(1)} hrs` : "";
+  if (label === "Study") return typeof assessment["study_hours"] === "number" ? `${(assessment["study_hours"] as number).toFixed(1)} hrs` : "";
+  if (label === "Activity") return typeof assessment["physical_activity_hours"] === "number" ? `${(assessment["physical_activity_hours"] as number).toFixed(1)} hrs` : "";
+  if (label === "Screen Usage") return typeof assessment["avg_daily_usage_hours"] === "number" ? `${(assessment["avg_daily_usage_hours"] as number).toFixed(1)} hrs` : "";
+  if (label === "Stress") return typeof assessment["stress_level"] === "string" ? (assessment["stress_level"] as string) : "";
   return "";
 }
 
@@ -30,8 +30,8 @@ export function AdaptiveProfile({ assessment, data }: { assessment: Record<strin
   const variant = variantFor(assessment);
 
   if (variant === 0) {
-    const strongest = data.reduce((best, item) => (item.value > best.value ? item : best), data[0]);
-    const focus = data.reduce((lowest, item) => (item.value < lowest.value ? item : lowest), data[0]);
+    const strongest = data.reduce((best, item) => (item.value > best.value ? item : best), data[0] ?? { label: "", value: 0 });
+    const focus = data.reduce((lowest, item) => (item.value < lowest.value ? item : lowest), data[0] ?? { label: "", value: 0 });
 
     return (
       <div className="space-y-3 px-1 py-2">
@@ -65,8 +65,8 @@ export function AdaptiveProfile({ assessment, data }: { assessment: Record<strin
         const percent = Math.round(item.value * 100);
         const label = signalLabel(item.value);
         const raw = rawValue(item.label, assessment);
-        const isStrong = item.label === data.reduce((best, current) => (current.value > best.value ? current : best), data[0]).label;
-        const isFocus = item.label === data.reduce((lowest, current) => (current.value < lowest.value ? current : lowest), data[0]).label;
+        const isStrong = item.label === data.reduce((best, current) => (current.value > best.value ? current : best), data[0] ?? { label: "", value: 0 }).label;
+        const isFocus = item.label === data.reduce((lowest, current) => (current.value < lowest.value ? current : lowest), data[0] ?? { label: "", value: 0 }).label;
 
         return (
           <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.025] px-3.5 py-3 transition hover:border-mb-cyan/20 hover:bg-white/[0.04]">

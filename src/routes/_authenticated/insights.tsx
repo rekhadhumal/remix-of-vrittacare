@@ -65,12 +65,12 @@ function InsightsPage() {
 
   const strongest = useMemo(() => {
     if (!signals.length) return null;
-    return signals.reduce((best, item) => (item.value > best.value ? item : best), signals[0]);
+    return signals.reduce((best, item) => (item.value > best.value ? item : best), signals[0] ?? { label: "", value: 0 });
   }, [signals]);
 
   const focus = useMemo(() => {
     if (!signals.length) return null;
-    return signals.reduce((lowest, item) => (item.value < lowest.value ? item : lowest), signals[0]);
+    return signals.reduce((lowest, item) => (item.value < lowest.value ? item : lowest), signals[0] ?? { label: "", value: 0 });
   }, [signals]);
 
   const actionItems = Array.isArray(saved?.result.needs_attention) ? saved.result.needs_attention : [];
