@@ -76,11 +76,11 @@ export function PredictionSections({
               <ul className="mt-3 space-y-3">
                 {items.map((item, index) => (
                   (() => {
-                    const [title, ...detailParts] = item.split(" — ");
-                    const detail = detailParts.join(" — ");
+                    const title = item.area;
+                    const detail = item.message && item.message !== item.area ? item.message : "";
                     return (
                   <li
-                    key={`${group.key}-${index}-${item}`}
+                    key={`${group.key}-${index}-${item.area}`}
                     className="flex gap-2 text-sm leading-relaxed text-foreground/85"
                   >
                     <span
