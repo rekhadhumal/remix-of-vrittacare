@@ -68,9 +68,10 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
           </div>
 
           <div className="space-y-3">
-            <div className="px-3 py-2">
-              <p className="text-[10px] text-muted-foreground">Dreamed into reality by</p>
-              <p className="mt-1 text-[10px] font-bold leading-relaxed text-foreground/90">RUTUJA DHUMAL &amp; VAIBHAV SOLANKE</p>
+            <div className="px-3 py-2 text-center">
+              <p className="text-[12px] font-semibold leading-5 text-foreground/90">Rutuja Dhumal</p>
+              <p className="text-[11px] font-medium leading-4 text-muted-foreground">&amp;</p>
+              <p className="text-[12px] font-semibold leading-5 text-foreground/90">Vaibhav Solanke</p>
             </div>
 
             <Button onClick={signOut} variant="ghost" className="w-full justify-start gap-2 px-3 text-sm text-muted-foreground hover:bg-white/[0.045] hover:text-foreground">
