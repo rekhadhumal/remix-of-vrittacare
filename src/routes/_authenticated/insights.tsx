@@ -82,21 +82,17 @@ function InsightsPage() {
     .slice(0, 4);
 
   const insightCard = (item: PredictionItem, tone: "cyan" | "violet") => (
-    <article className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-md">
+    <article className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
       <div className="flex items-start gap-3">
-        <div className={"grid h-10 w-10 shrink-0 place-items-center rounded-xl " + (tone === "violet" ? "bg-mb-violet/10 text-mb-violet" : "bg-mb-cyan/10 text-mb-cyan")}>
-          <Sparkles className="h-5 w-5" />
+        <div className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${tone === "violet" ? "bg-mb-violet/10 text-mb-violet" : "bg-mb-cyan/10 text-mb-cyan"}`}>
+          <Sparkles className="h-4 w-4" />
         </div>
         <div className="min-w-0">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">{item.interpretation}</p>
-          <h3 className="mt-1 text-base font-bold">{item.area}</h3>
-          <p className="mt-1 text-sm text-foreground/80">Current: <span className="font-semibold">{String(item.current_value)}</span></p>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.message}</p>
-          {typeof item.estimated_score_change === "number" ? (
-            <p className="mt-3 text-xs font-semibold text-mb-cyan">
-              Estimated change if improved: +{item.estimated_score_change.toFixed(2)}
-            </p>
-          ) : null}
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-sm font-bold">{item.area}</h3>
+            <span className="text-[11px] text-muted-foreground">{String(item.current_value)}</span>
+          </div>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{item.message}</p>
         </div>
       </div>
     </article>
@@ -118,11 +114,11 @@ function InsightsPage() {
                 <div className="mt-4 flex flex-wrap items-center gap-2">
                   <StatusPill tone={saved.result.score >= 6.5 ? "good" : saved.result.score >= 5 ? "warn" : "bad"}>{saved.result.category}</StatusPill>
                   <span className="text-sm text-muted-foreground">
-                    Your latest model score is {saved.result.score.toFixed(1)}/10.
+                    Your latest check-in score is {saved.result.score.toFixed(1)}/10.
                   </span>
                 </div>
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                  Results tell you what the model noticed. This page is different: it turns those observations into practical, gentle actions you can actually try.
+                  Your result is a snapshot of your current habits. Here, we turn it into a few simple ideas you can try in everyday life.
                 </p>
               </>
             ) : (
@@ -149,7 +145,7 @@ function InsightsPage() {
           <>
             <div className="grid gap-4 lg:grid-cols-[1.1fr_.9fr]">
               <Panel hover className="relative overflow-hidden">
-                <SectionTitle sub="Your profile is built from five everyday signals in your latest assessment.">What shaped your result</SectionTitle>
+                <SectionTitle sub="A simple snapshot of the habits you shared.">What shaped your result</SectionTitle>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   <div className="rounded-2xl border border-mb-cyan/15 bg-mb-cyan/[0.05] p-5">
                     <p className="text-xs uppercase tracking-[0.16em] text-mb-cyan">Strongest signal</p>
@@ -172,7 +168,7 @@ function InsightsPage() {
               </Panel>
 
               <Panel hover>
-                <SectionTitle sub="The chart shows the pattern; these numbers show what you actually reported.">Your latest signals</SectionTitle>
+                <SectionTitle sub="A quick look at what you shared in your latest check-in.">Your latest signals</SectionTitle>
                 <div className="mt-3 space-y-2">
                   {assessment ? (
                     <>
@@ -195,14 +191,13 @@ function InsightsPage() {
             </div>
 
             <Panel hover>
-              <SectionTitle sub="These bars use the model's estimated score-change values to show where improvement may have more room.">
-                Where there may be more room to improve
+              <SectionTitle sub="These areas may be worth giving a little more attention.">
+                A little more attention
               </SectionTitle>
               {opportunityItems.length ? (
                 <div className="mt-5 grid gap-4 md:grid-cols-2">
-                  {opportunityItems.map((item) => {
-                    const change = Math.max(0, item.estimated_score_change ?? 0);
-                    const width = Math.min(100, Math.max(10, change * 100));
+                  {opportunityItems.map((item, index) => {
+                    const width = Math.max(28, 92 - index * 18);
                     return (
                       <div key={`opportunity-${item.area}`} className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
                         <div className="flex items-center justify-between gap-3">
@@ -210,7 +205,7 @@ function InsightsPage() {
                             <p className="text-sm font-bold">{item.area}</p>
                             <p className="mt-1 text-xs text-muted-foreground">{item.interpretation}</p>
                           </div>
-                          <span className="text-sm font-extrabold text-mb-cyan">+{change.toFixed(2)}</span>
+                          <span className="text-xs font-semibold text-mb-cyan">{index === 0 ? "Start here" : "Worth noticing"}</span>
                         </div>
                         <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
                           <div
@@ -228,16 +223,16 @@ function InsightsPage() {
                 </p>
               )}
               <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
-                This is an estimated model signal from the current assessment — not a guaranteed change and not a clinical measurement.
+                This is based on your latest check-in and is meant for reflection, not diagnosis.
               </p>
             </Panel>
 
             <Panel>
-              <SectionTitle sub="Your prediction already groups these signals into areas to keep, watch, or act on.">What to focus on</SectionTitle>
+              <SectionTitle sub="Here are the few areas worth acting on, keeping an eye on, or maintaining.">What to focus on</SectionTitle>
               <div className="mt-3 grid gap-4 lg:grid-cols-3">
                 <div className="rounded-2xl border border-mb-cyan/20 bg-mb-cyan/[0.045] p-5">
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-mb-cyan">Act</p>
-                  <p className="mt-2 text-lg font-extrabold">{actionItems.length} area{actionItems.length === 1 ? "" : "s"} need attention</p>
+                  <p className="mt-2 text-lg font-extrabold">{actionItems.length} area{actionItems.length === 1 ? "" : "s"} to focus on</p>
                   <div className="mt-4 space-y-3">
                     {actionItems.length ? actionItems.map((item) => <div key={item.area}>{insightCard(item, "cyan")}</div>) : <p className="text-sm text-muted-foreground">No areas are currently flagged for attention.</p>}
                   </div>
@@ -261,19 +256,7 @@ function InsightsPage() {
               </div>
             </Panel>
 
-            <Panel>
-              <SectionTitle sub="The model highlights patterns; the practical next step is yours to choose.">Why these areas are highlighted</SectionTitle>
-              <div className="mt-3 grid gap-3 md:grid-cols-2">
-                {[...actionItems, ...watchItems].slice(0, 4).map((item) => (
-                  <div key={`why-${item.area}`} className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
-                    <p className="font-bold">{item.area}</p>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      Your latest assessment placed this signal in the <span className="font-semibold text-foreground/80">{(item.interpretation || "current assessment").toLowerCase()}</span> group. The guidance above is based on the current assessment snapshot, not a medical diagnosis.
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </Panel>
+
 
             <section className="overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.035] backdrop-blur-2xl">
               <div className="grid md:grid-cols-[1fr_auto] md:items-center">
