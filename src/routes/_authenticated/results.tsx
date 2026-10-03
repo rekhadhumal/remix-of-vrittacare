@@ -52,20 +52,35 @@ function ResultsPage() {
         {!checked ? null : saved ? (
           <div className="grid gap-5">
             <div className={saved.assessment ? "grid gap-5 lg:grid-cols-2" : "grid gap-5"}>
-              <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-mb-line bg-mb-panel-2/45 p-5 text-center sm:flex-row sm:gap-6">
-                <ScoreGauge score={saved.result.score} />
-                <div className="mt-3 sm:mt-0 sm:text-left">
-                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Mental Health Score</p>
-                  <p className="mt-2 text-2xl font-extrabold text-foreground">{saved.result.category}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Latest model category</p>
-                  <StatusPill tone={saved.result.score >= 6.5 ? "good" : saved.result.score >= 5 ? "warn" : "bad"} className="mt-3">
-                    {scoreStatus(saved.result.score).headline}
-                  </StatusPill>
+              <div className="space-y-4">
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-mb-line bg-mb-panel-2/45 p-5 text-center sm:flex-row sm:gap-6">
+                  <ScoreGauge score={saved.result.score} />
+                  <div className="mt-3 sm:mt-0 sm:text-left">
+                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Mental Health Score</p>
+                    <p className="mt-2 text-2xl font-extrabold text-foreground">{saved.result.category}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">Latest model category</p>
+                    <StatusPill tone={saved.result.score >= 6.5 ? "good" : saved.result.score >= 5 ? "warn" : "bad"} className="mt-3">
+                      {scoreStatus(saved.result.score).headline}
+                    </StatusPill>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-mb-line bg-mb-panel-2/45 p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-mb-cyan">Next useful focus</p>
+                  <p className="mt-2 text-lg font-extrabold">
+                    {saved.result.needs_attention?.[0]?.area ?? saved.result.watch?.[0]?.area ?? "Keep checking in"}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {saved.result.needs_attention?.[0]?.message ?? saved.result.watch?.[0]?.message ?? "Use your result as a guide and choose one small, realistic step."}
+                  </p>
+                  <Link to="/insights" className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-mb-cyan">
+                    Explore this in Insights <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </div>
               </div>
 
               {saved.assessment ? (
-                <div className="min-h-[300px] rounded-2xl border border-mb-line bg-mb-panel-2/45 p-4">
+                <div className="rounded-2xl border border-mb-line bg-mb-panel-2/45 p-4">
                   <p className="text-sm font-bold">Wellness profile</p>
                   <p className="mt-1 text-xs text-muted-foreground">Five signals from your latest answers.</p>
                   <AdaptiveProfile assessment={saved.assessment} data={radarValues(saved.assessment)} />
