@@ -76,6 +76,10 @@ function InsightsPage() {
   const actionItems = Array.isArray(saved?.result.needs_attention) ? saved.result.needs_attention : [];
   const watchItems = Array.isArray(saved?.result.watch) ? saved.result.watch : [];
   const stableItems = Array.isArray(saved?.result.stable) ? saved.result.stable : [];
+  const opportunityItems = [...actionItems, ...watchItems]
+    .filter((item) => typeof item.estimated_score_change === "number" && Number.isFinite(item.estimated_score_change))
+    .sort((a, b) => (b.estimated_score_change ?? 0) - (a.estimated_score_change ?? 0))
+    .slice(0, 4);
 
   const insightCard = (item: PredictionItem, tone: "cyan" | "violet") => (
     <article className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-md">
@@ -189,6 +193,44 @@ function InsightsPage() {
                 </div>
               </Panel>
             </div>
+
+            <Panel hover>
+              <SectionTitle sub="These bars use the model's estimated score-change values to show where improvement may have more room.">
+                Where there may be more room to improve
+              </SectionTitle>
+              {opportunityItems.length ? (
+                <div className="mt-5 grid gap-4 md:grid-cols-2">
+                  {opportunityItems.map((item) => {
+                    const change = Math.max(0, item.estimated_score_change ?? 0);
+                    const width = Math.min(100, Math.max(10, change * 100));
+                    return (
+                      <div key={`opportunity-${item.area}`} className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-bold">{item.area}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">{item.interpretation}</p>
+                          </div>
+                          <span className="text-sm font-extrabold text-mb-cyan">+{change.toFixed(2)}</span>
+                        </div>
+                        <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-mb-cyan to-mb-violet"
+                            style={{ width: `${width}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="mt-4 text-sm text-muted-foreground">
+                  Your latest result does not include estimated improvement values yet.
+                </p>
+              )}
+              <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
+                This is an estimated model signal from the current assessment — not a guaranteed change and not a clinical measurement.
+              </p>
+            </Panel>
 
             <Panel>
               <SectionTitle sub="Your prediction already groups these signals into areas to keep, watch, or act on.">What to focus on</SectionTitle>
