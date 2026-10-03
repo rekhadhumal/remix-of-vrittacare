@@ -201,11 +201,19 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
   const focusInfo = FOCUS_COPY[focus.label] ?? FOCUS_COPY["Stress"];
   if (!focusInfo) return null;
   const FocusIcon = focusInfo.icon;
+  const opportunityItems = [
+    ...(saved?.result.needs_attention ?? []),
+    ...(saved?.result.watch ?? []),
+  ]
+    .filter((item) => typeof item.estimated_score_change === "number" && Number.isFinite(item.estimated_score_change))
+    .sort((a, b) => (b.estimated_score_change ?? 0) - (a.estimated_score_change ?? 0))
+    .slice(0, 3);
 
   return (
     <>
       <div className="grid items-start gap-4 lg:grid-cols-[1.06fr_0.94fr]">
-        <Panel hover className="relative h-fit self-start overflow-hidden">
+        <div className="space-y-4">
+          <Panel hover className="relative h-fit self-start overflow-hidden">
           <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-mb-cyan/12 blur-3xl" />
           <div className="relative flex flex-col gap-5 md:flex-row md:items-center">
             <div className="relative shrink-0">
@@ -230,8 +238,43 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
               </div>
             </div>
           </div>
+          </Panel>
 
-        </Panel>
+          <Panel hover className="relative overflow-hidden">
+            <SectionTitle sub="A visual summary of the areas the model estimates may have more room to improve.">
+              Estimated opportunities
+            </SectionTitle>
+            {opportunityItems.length ? (
+              <div className="mt-4 space-y-4">
+                {opportunityItems.map((item) => {
+                  const change = Math.max(0, item.estimated_score_change ?? 0);
+                  const width = Math.min(100, Math.max(10, change * 100));
+                  return (
+                    <div key={item.area}>
+                      <div className="flex items-center justify-between gap-3 text-sm">
+                        <span className="font-semibold">{item.area}</span>
+                        <span className="font-bold text-mb-cyan">+{change.toFixed(2)}</span>
+                      </div>
+                      <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-mb-cyan to-mb-violet transition-all"
+                          style={{ width: `${width}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="mt-4 text-sm text-muted-foreground">
+                Your latest result does not include estimated improvement values yet.
+              </p>
+            )}
+            <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
+              These are model estimates from the current assessment, not guaranteed changes or clinical measurements.
+            </p>
+          </Panel>
+        </div>
 
         <Panel hover className="relative overflow-hidden">
           <div className="mb-2 flex items-start justify-between gap-3">
