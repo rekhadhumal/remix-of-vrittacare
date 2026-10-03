@@ -76,11 +76,6 @@ function InsightsPage() {
   const actionItems = Array.isArray(saved?.result.needs_attention) ? saved.result.needs_attention : [];
   const watchItems = Array.isArray(saved?.result.watch) ? saved.result.watch : [];
   const stableItems = Array.isArray(saved?.result.stable) ? saved.result.stable : [];
-  const opportunityItems = [...actionItems, ...watchItems]
-    .filter((item) => typeof item.estimated_score_change === "number" && Number.isFinite(item.estimated_score_change))
-    .sort((a, b) => (b.estimated_score_change ?? 0) - (a.estimated_score_change ?? 0))
-    .slice(0, 4);
-
   const insightCard = (item: PredictionItem, tone: "cyan" | "violet") => (
     <article className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
       <div className="flex items-start gap-3">
@@ -191,72 +186,77 @@ function InsightsPage() {
             </div>
 
             <Panel hover>
-              <SectionTitle sub="These areas may be worth giving a little more attention.">
-                A little more attention
+              <SectionTitle sub="A simple way to turn your result into one small, realistic next step.">
+                Your focus path
               </SectionTitle>
-              {opportunityItems.length ? (
-                <div className="mt-5 grid gap-4 md:grid-cols-2">
-                  {opportunityItems.map((item, index) => {
-                    const width = Math.max(28, 92 - index * 18);
-                    return (
-                      <div key={`opportunity-${item.area}`} className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
-                        <div className="flex items-center justify-between gap-3">
-                          <div>
-                            <p className="text-sm font-bold">{item.area}</p>
-                            <p className="mt-1 text-xs text-muted-foreground">{item.interpretation}</p>
-                          </div>
-                          <span className="text-xs font-semibold text-mb-cyan">{index === 0 ? "Start here" : "Worth noticing"}</span>
-                        </div>
-                        <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
-                          <div
-                            className="h-full rounded-full bg-gradient-to-r from-mb-cyan to-mb-violet"
-                            style={{ width: `${width}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="mt-4 text-sm text-muted-foreground">
-                  Your latest result does not include estimated improvement values yet.
-                </p>
-              )}
-              <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
-                This is based on your latest check-in and is meant for reflection, not diagnosis.
-              </p>
-            </Panel>
-
-            <Panel>
-              <SectionTitle sub="Here are the few areas worth acting on, keeping an eye on, or maintaining.">What to focus on</SectionTitle>
-              <div className="mt-3 grid gap-4 lg:grid-cols-3">
-                <div className="rounded-2xl border border-mb-cyan/20 bg-mb-cyan/[0.045] p-5">
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-mb-cyan">Act</p>
-                  <p className="mt-2 text-lg font-extrabold">{actionItems.length} area{actionItems.length === 1 ? "" : "s"} to focus on</p>
-                  <div className="mt-4 space-y-3">
-                    {actionItems.length ? actionItems.map((item) => <div key={item.area}>{insightCard(item, "cyan")}</div>) : <p className="text-sm text-muted-foreground">No areas are currently flagged for attention.</p>}
+              <div className="mt-5 grid gap-3 md:grid-cols-3">
+                {[
+                  {
+                    step: "01",
+                    label: "Start here",
+                    item: actionItems[0] ?? watchItems[0],
+                    tone: "cyan",
+                    icon: Heart,
+                  },
+                  {
+                    step: "02",
+                    label: "Then notice",
+                    item: watchItems.find((item) => item.area !== (actionItems[0]?.area ?? "")) ?? watchItems[0],
+                    tone: "violet",
+                    icon: Lightbulb,
+                  },
+                  {
+                    step: "03",
+                    label: "Keep going",
+                    item: stableItems[0],
+                    tone: "cyan",
+                    icon: CheckCircle2,
+                  },
+                ].map(({ step, label, item, tone, icon: Icon }) => (
+                  <div key={step} className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] p-5">
+                    <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${tone === "violet" ? "bg-mb-violet/10 text-mb-violet" : "bg-mb-cyan/10 text-mb-cyan"}`}>
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{step} · {label}</p>
+                    {item ? (
+                      <>
+                        <h3 className="mt-2 text-base font-extrabold">{item.area}</h3>
+                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.message}</p>
+                      </>
+                    ) : (
+                      <>
+                        <h3 className="mt-2 text-base font-extrabold">Keep checking in</h3>
+                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Small, steady habits are easier to build than big changes all at once.</p>
+                      </>
+                    )}
                   </div>
-                </div>
-
-                <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">Watch</p>
-                  <p className="mt-2 text-lg font-extrabold">{watchItems.length} area{watchItems.length === 1 ? "" : "s"} could improve</p>
-                  <div className="mt-4 space-y-3">
-                    {watchItems.length ? watchItems.map((item) => <div key={item.area}>{insightCard(item, "violet")}</div>) : <p className="text-sm text-muted-foreground">Nothing is currently in the watch group.</p>}
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-mb-cyan">Keep</p>
-                  <p className="mt-2 text-lg font-extrabold">{stableItems.length} area{stableItems.length === 1 ? "" : "s"} are going well</p>
-                  <div className="mt-4 space-y-3">
-                    {stableItems.length ? stableItems.map((item) => <div key={item.area}>{insightCard(item, "cyan")}</div>) : <p className="text-sm text-muted-foreground">No stable areas were returned for this assessment.</p>}
-                  </div>
-                </div>
+                ))}
               </div>
             </Panel>
 
-
+            <Panel>
+              <SectionTitle sub="A quick summary of what your latest check-in highlighted.">What to focus on</SectionTitle>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                {[
+                  { label: "Needs a little attention", items: actionItems, tone: "cyan" },
+                  { label: "Keep an eye on", items: watchItems, tone: "violet" },
+                  { label: "Going well", items: stableItems, tone: "cyan" },
+                ].map(({ label, items, tone }) => (
+                  <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                    <p className={`text-xs font-bold uppercase tracking-[0.14em] ${tone === "violet" ? "text-mb-violet" : "text-mb-cyan"}`}>{label}</p>
+                    <p className="mt-2 text-2xl font-extrabold">{items.length}</p>
+                    <p className="text-xs text-muted-foreground">{items.length === 1 ? "area" : "areas"}</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {items.slice(0, 4).map((item) => (
+                        <span key={item.area} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-foreground/80">
+                          {item.area}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Panel>
 
             <section className="overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.035] backdrop-blur-2xl">
               <div className="grid md:grid-cols-[1fr_auto] md:items-center">
