@@ -45,7 +45,7 @@ function ResultsPage() {
   return (
     <AppShell>
       <Panel>
-        <SectionTitle sub={saved ? getResultLine(userSeed, Math.round(saved.result.score * 10)) : "Scored by your connected prediction model from your latest assessment."}>
+        <SectionTitle sub={saved ? getResultLine(userSeed, Math.round(saved.result.score * 10)) : "Based on your latest check-in."}>
           My Results
         </SectionTitle>
 
@@ -56,9 +56,9 @@ function ResultsPage() {
                 <div className="flex flex-col items-center justify-center rounded-2xl border border-mb-line bg-mb-panel-2/45 p-5 text-center sm:flex-row sm:gap-6">
                   <ScoreGauge score={saved.result.score} />
                   <div className="mt-3 sm:mt-0 sm:text-left">
-                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Mental Health Score</p>
+                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Wellness Score</p>
                     <p className="mt-2 text-2xl font-extrabold text-foreground">{saved.result.category}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">Latest model category</p>
+                    <p className="mt-1 text-sm text-muted-foreground">Your current result</p>
                     <StatusPill tone={saved.result.score >= 6.5 ? "good" : saved.result.score >= 5 ? "warn" : "bad"} className="mt-3">
                       {scoreStatus(saved.result.score).headline}
                     </StatusPill>
