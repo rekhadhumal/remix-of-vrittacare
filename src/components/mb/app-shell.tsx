@@ -8,6 +8,7 @@ import { BrandLockup } from "@/components/mb/brand-mark";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AssistantPanel } from "@/components/mb/assistant-panel";
+import botAvatar from "@/assets/bot-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -108,7 +109,7 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
             className="fixed bottom-6 right-6 z-[60] flex items-center gap-2.5 rounded-full border border-mb-cyan/25 bg-[#071a31]/90 px-3 py-2 shadow-[0_18px_45px_-18px_rgba(34,211,238,.7)] backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-mb-cyan/50 hover:bg-[#0a223d] sm:bottom-7 sm:right-7"
           >
             <span className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-full border border-mb-cyan/35 bg-mb-panel-2">
-              <img src="/bot-avatar.png" alt="" className="h-full w-full object-contain" />
+              <img src={botAvatar} alt="" className="h-full w-full object-contain" />
               <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#071a31] bg-mb-green" />
             </span>
             <span className="hidden text-left sm:block">
