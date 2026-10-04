@@ -8,7 +8,7 @@ import heroInclusive from "@/assets/mindbalance-hero-inclusive.jpg";
 import { AppShell } from "@/components/mb/app-shell";
 import { AssistantPanel } from "@/components/mb/assistant-panel";
 import { Panel, SectionTitle, StatusPill } from "@/components/mb/primitives";
-import { Radar3D } from "@/components/mb/radar-chart";
+import { Radar3D, RadarChart } from "@/components/mb/radar-chart";
 import { AdaptiveProfile } from "@/components/mb/adaptive-profile";
 import { ScoreGauge } from "@/components/mb/score-gauge";
 import { WellnessMetrics } from "@/components/mb/wellness-metrics";
@@ -222,7 +222,7 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-mb-cyan">Your latest model result</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-mb-cyan">Your latest check-in</p>
               <h2 className="mt-2 text-2xl font-extrabold">{category ?? status?.label ?? "Ready when you are"}</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 {status?.headline ?? "Complete an assessment to see your personalized score."}
@@ -241,37 +241,14 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
           </Panel>
 
           <Panel hover className="relative overflow-hidden">
-            <SectionTitle sub="A visual summary of the areas the model estimates may have more room to improve.">
-              Estimated opportunities
+            <SectionTitle sub="See how your everyday habits compare at a glance.">
+              Your wellness balance
             </SectionTitle>
-            {opportunityItems.length ? (
-              <div className="mt-4 space-y-4">
-                {opportunityItems.map((item) => {
-                  const change = Math.max(0, item.estimated_score_change ?? 0);
-                  const width = Math.min(100, Math.max(10, change * 100));
-                  return (
-                    <div key={item.area}>
-                      <div className="flex items-center justify-between gap-3 text-sm">
-                        <span className="font-semibold">{item.area}</span>
-                        <span className="font-bold text-mb-cyan">+{change.toFixed(2)}</span>
-                      </div>
-                      <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-mb-cyan to-mb-violet transition-all"
-                          style={{ width: `${width}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="mt-4 text-sm text-muted-foreground">
-                Your latest result does not include estimated improvement values yet.
-              </p>
-            )}
-            <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
-              These are model estimates from the current assessment, not guaranteed changes or clinical measurements.
+            <div className="mt-2 rounded-2xl border border-white/10 bg-white/[0.02] px-2 py-3">
+              <RadarChart data={radar} size={330} />
+            </div>
+            <p className="mt-3 text-center text-xs leading-relaxed text-muted-foreground">
+              A fuller shape means more of these habits are working well together. Use it as a quick snapshot, not a score to chase.
             </p>
           </Panel>
         </div>
