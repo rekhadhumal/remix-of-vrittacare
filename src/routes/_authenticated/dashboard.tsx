@@ -8,7 +8,7 @@ import heroInclusive from "@/assets/mindbalance-hero-inclusive.jpg";
 import { AppShell } from "@/components/mb/app-shell";
 import { AssistantPanel } from "@/components/mb/assistant-panel";
 import { Panel, SectionTitle, StatusPill } from "@/components/mb/primitives";
-import { Radar3D, RadarChart } from "@/components/mb/radar-chart";
+import { Radar3D } from "@/components/mb/radar-chart";
 import { AdaptiveProfile } from "@/components/mb/adaptive-profile";
 import { ScoreGauge } from "@/components/mb/score-gauge";
 import { WellnessMetrics } from "@/components/mb/wellness-metrics";
@@ -201,14 +201,6 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
   const focusInfo = FOCUS_COPY[focus.label] ?? FOCUS_COPY["Stress"];
   if (!focusInfo) return null;
   const FocusIcon = focusInfo.icon;
-  const opportunityItems = [
-    ...(saved?.result.needs_attention ?? []),
-    ...(saved?.result.watch ?? []),
-  ]
-    .filter((item) => typeof item.estimated_score_change === "number" && Number.isFinite(item.estimated_score_change))
-    .sort((a, b) => (b.estimated_score_change ?? 0) - (a.estimated_score_change ?? 0))
-    .slice(0, 3);
-
   return (
     <>
       <div className="grid items-start gap-4 lg:grid-cols-[1.06fr_0.94fr]">
@@ -241,15 +233,38 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
           </Panel>
 
           <Panel hover className="relative overflow-hidden">
-            <SectionTitle sub="See how your everyday habits compare at a glance.">
-              Your wellness balance
+            <SectionTitle sub="A few practical ideas based on the habits you shared.">
+              Your next small steps
             </SectionTitle>
-            <div className="mt-2 rounded-2xl border border-white/10 bg-white/[0.02] px-2 py-3">
-              <RadarChart data={radar} size={330} />
+            <div className="mt-4 space-y-3">
+              {[...radar]
+                .sort((a, b) => a.value - b.value)
+                .slice(0, 3)
+                .map((item, index) => {
+                  const info = FOCUS_COPY[item.label] ?? FOCUS_COPY["Stress"];
+                  const Icon = info.icon;
+                  return (
+                    <div key={item.label} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3.5">
+                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-mb-cyan/20 bg-mb-cyan/10 text-mb-cyan">
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-mb-cyan">
+                          {String(index + 1).padStart(2, "0")} · Small step
+                        </p>
+                        <p className="mt-1 text-sm font-bold text-foreground">{info.title}</p>
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{info.text}</p>
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
-            <p className="mt-3 text-center text-xs leading-relaxed text-muted-foreground">
-              A fuller shape means more of these habits are working well together. Use it as a quick snapshot, not a score to chase.
-            </p>
+            <Link
+              to="/insights"
+              className="mt-4 inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs font-bold text-white transition hover:border-mb-cyan/40 hover:bg-white/10 hover:text-mb-cyan"
+            >
+              View my insights <ArrowRight className="h-4 w-4" />
+            </Link>
           </Panel>
         </div>
 
@@ -280,23 +295,6 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
         <WellnessMetrics assessment={assessment} />
       </Panel>
 
-      <Panel hover>
-          <div className="grid gap-5 md:grid-cols-[auto_1fr_auto] md:items-center">
-            <span className="grid h-11 w-11 place-items-center rounded-xl border border-mb-cyan/20 bg-mb-cyan/10 text-mb-cyan">
-              <FocusIcon className="h-5 w-5" />
-            </span>
-            <div>
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-mb-cyan">
-              Gentle focus
-            </div>
-              <h3 className="mt-2 text-xl font-extrabold">{focusInfo.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{focusInfo.text}</p>
-            </div>
-            <Link to="/insights" className="inline-flex items-center gap-2 text-sm font-bold text-mb-cyan transition hover:gap-3">
-              Turn this into a plan <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-      </Panel>
     </>
   );
 }
