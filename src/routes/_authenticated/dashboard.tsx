@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, Heart, Moon, Sparkles, Target, Wind } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import heroInclusive from "@/assets/mindbalance-hero-inclusive.jpg";
 import { AppShell } from "@/components/mb/app-shell";
@@ -193,14 +193,6 @@ export function DashboardBody({ data, saved = null, seed = "vrittacare" }: { dat
   const category = saved?.result.category ?? data?.result?.status_label ?? null;
   const status = score === null ? null : scoreStatus(score);
   const radar = radarValues(assessment);
-  const focus = useMemo(
-    () => radar.reduce((lowest, current) => (current.value < lowest.value ? current : lowest), radar[0] ?? { label: "Stress", value: 0 }),
-    [radar],
-  );
-
-  const focusInfo = FOCUS_COPY[focus.label] ?? FOCUS_COPY["Stress"];
-  if (!focusInfo) return null;
-  const FocusIcon = focusInfo.icon;
   return (
     <>
       <div className="grid items-start gap-4 lg:grid-cols-[1.06fr_0.94fr]">
