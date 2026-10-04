@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 
 import heroInclusive from "@/assets/mindbalance-hero-inclusive.jpg";
 import { AppShell } from "@/components/mb/app-shell";
-import { AssistantPanel } from "@/components/mb/assistant-panel";
 import { Panel, SectionTitle, StatusPill } from "@/components/mb/primitives";
 import { Radar3D } from "@/components/mb/radar-chart";
 import { AdaptiveProfile } from "@/components/mb/adaptive-profile";
@@ -95,7 +94,7 @@ function DashboardPage() {
   const userSeed = getUserSeed(authSeed ?? displayName, latestAssessment);
 
   return (
-    <AppShell aside={<AssistantPanel />}>
+    <AppShell>
       <Hero
         name={displayName}
         score={saved?.result.score ?? data?.result?.score ?? null}
@@ -121,11 +120,6 @@ function DashboardPage() {
         <DashboardBody data={data} saved={saved} seed={userSeed} />
       )}
 
-      <div className="xl:hidden">
-        <Panel>
-          <AssistantPanel compact />
-        </Panel>
-      </div>
     </AppShell>
   );
 }
