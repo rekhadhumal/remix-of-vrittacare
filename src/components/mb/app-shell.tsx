@@ -2,9 +2,12 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { ClipboardList, Home, Info, LineChart, LogOut, MessageCircle, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
+import { useState } from "react";
 
 import { BrandLockup } from "@/components/mb/brand-mark";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AssistantPanel } from "@/components/mb/assistant-panel";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +24,7 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [assistantOpen, setAssistantOpen] = useState(false);
   async function signOut() {
     await queryClient.cancelQueries();
     queryClient.clear();
@@ -94,6 +98,37 @@ export function AppShell({ children, aside }: { children: ReactNode; aside?: Rea
           </aside>
         ) : null}
       </div>
+
+      {pathname !== "/chat" ? (
+        <>
+          <button
+            type="button"
+            onClick={() => setAssistantOpen(true)}
+            aria-label="Open Wellness Assistant"
+            className="fixed bottom-6 right-6 z-[60] flex items-center gap-2.5 rounded-full border border-mb-cyan/25 bg-[#071a31]/90 px-3 py-2 shadow-[0_18px_45px_-18px_rgba(34,211,238,.7)] backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-mb-cyan/50 hover:bg-[#0a223d] sm:bottom-7 sm:right-7"
+          >
+            <span className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-full border border-mb-cyan/35 bg-mb-panel-2">
+              <img src="/bot-avatar.png" alt="" className="h-full w-full object-contain" />
+              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#071a31] bg-mb-green" />
+            </span>
+            <span className="hidden text-left sm:block">
+              <span className="block text-[9px] font-bold uppercase tracking-[0.16em] text-mb-cyan">Wellness Assistant</span>
+              <span className="block text-[11px] font-medium text-white/80">Hi, I’m here if you need me</span>
+            </span>
+          </button>
+
+          <Dialog open={assistantOpen} onOpenChange={setAssistantOpen}>
+            <DialogContent className="mb-theme max-w-md border-white/15 bg-mb-panel/95 p-0 text-foreground shadow-[0_30px_90px_-35px_rgba(34,211,238,.45)] backdrop-blur-2xl sm:max-w-lg">
+              <DialogHeader className="sr-only">
+                <DialogTitle>Wellness Assistant</DialogTitle>
+              </DialogHeader>
+              <div className="h-[min(720px,82vh)] p-4 sm:p-5">
+                <AssistantPanel />
+              </div>
+            </DialogContent>
+          </Dialog>
+        </>
+      ) : null}
 
       <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-white/10 bg-[#020817]/90 px-2 py-2 backdrop-blur-2xl lg:hidden">
         {NAV.map((item) => (
